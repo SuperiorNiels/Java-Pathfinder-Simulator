@@ -1,12 +1,20 @@
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.border.Border;
 
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
@@ -30,6 +38,7 @@ public class GUI extends JFrame {
 		 */
 		JMenuBar menu = new JMenuBar();
 		JMenu file = new JMenu("File");
+		file.setMnemonic(KeyEvent.VK_C);
 		file.add(new JMenuItem("New"));
 		file.add(new JMenuItem("Open"));
 		file.add(new JMenuItem("Save"));
@@ -44,6 +53,22 @@ public class GUI extends JFrame {
 		settings.add(new JMenuItem("Grid height"));
 		menu.add(file);
 		menu.add(settings);
-		setJMenuBar(menu);		
+		setJMenuBar(menu);
+		
+		/*
+		 * Create Panels
+		 */
+		JPanel grid = new JPanel();
+		Border border = BorderFactory.createTitledBorder("Grid");
+		grid.setBorder(border);
+		grid.setPreferredSize(new Dimension(200,200));
+		grid.setLayout(new GridLayout(4,4));
+		for(int i=0;i<28;i++) {
+			JLabel box = new JLabel();
+			Border blackLine = BorderFactory.createLineBorder(Color.BLACK);
+			box.setBorder(blackLine);
+			grid.add(box);
+		}
+		add(grid);
 	}	
 }
