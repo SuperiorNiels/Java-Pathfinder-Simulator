@@ -1,6 +1,7 @@
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,9 +19,11 @@ import javax.swing.border.Border;
 
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
-	
+	public final int box_X = 18;
+	public final int box_Y = 18;
 	public GUI(String title) {
 		setTitle(title);
+		setLayout(new FlowLayout(FlowLayout.LEFT));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		/*
@@ -59,11 +62,11 @@ public class GUI extends JFrame {
 		 * Create Panels
 		 */
 		JPanel grid = new JPanel();
-		Border border = BorderFactory.createTitledBorder("Grid");
-		grid.setBorder(border);
-		grid.setPreferredSize(new Dimension(200,200));
-		grid.setLayout(new GridLayout(4,4));
-		for(int i=0;i<28;i++) {
+		//Border border = BorderFactory.createTitledBorder("Grid");
+		//grid.setBorder(border);
+		grid.setPreferredSize(new Dimension(700,700));
+		grid.setLayout(new GridLayout(box_X,box_Y));
+		for(int i=0;i<(box_X*box_Y);i++) {
 			JLabel box = new JLabel();
 			Border blackLine = BorderFactory.createLineBorder(Color.BLACK);
 			box.setBorder(blackLine);
