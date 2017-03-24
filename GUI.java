@@ -1,7 +1,9 @@
 
 import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,6 +22,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -26,8 +30,8 @@ import javax.swing.border.Border;
 
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
-	public int box_X = 10;
-	public int box_Y = 10;
+	public int box_X = 15;
+	public int box_Y = 15;
 	public GUI(String title) {
 		setTitle(title);
 		setLayout(new BorderLayout());
@@ -72,6 +76,26 @@ public class GUI extends JFrame {
 		/*
 		 * Create Option Panel
 		 */
+		JPanel algorithm_options = new JPanel(new GridLayout(0,1));
+		Border algorithm_options_title = BorderFactory.createTitledBorder("Algorithm");
+		ButtonGroup algorithm = new ButtonGroup();
+		JRadioButton a_star = new JRadioButton("A*");
+		algorithm.add(a_star);
+		algorithm_options.add(a_star);
+		JRadioButton dijkstra = new JRadioButton("Dijkstra");
+		algorithm.add(dijkstra);
+		algorithm_options.add(dijkstra);
+		JRadioButton bfs = new JRadioButton("Breadth-first search");
+		algorithm.add(bfs);
+		algorithm_options.add(bfs);
+		JRadioButton dfs = new JRadioButton("Depth-first search");
+		algorithm.add(dfs);
+		algorithm_options.add(dfs);
+		JRadioButton Bfs = new JRadioButton("Best-first search");
+		algorithm.add(Bfs);
+		algorithm_options.add(Bfs);
+		algorithm_options.setBorder(algorithm_options_title);
+		
 		JPanel options = new JPanel(new GridLayout(3,0));
 		JPanel grid_options = new JPanel(new BorderLayout());
 		Border grid_options_title = BorderFactory.createTitledBorder("Grid Options");
@@ -84,7 +108,10 @@ public class GUI extends JFrame {
 				String input = textField.getText();
 				box_X = Integer.parseInt(input);
 				box_Y = box_X;
+				getContentPane().remove(grid_options);
 				addGrid(box_X,box_Y);
+				getContentPane().revalidate();
+				getContentPane().validate();
 			}
 		});
 	    label.setLabelFor(textField);
@@ -95,26 +122,22 @@ public class GUI extends JFrame {
 	    grid_options.add(grid_size_x,BorderLayout.NORTH);
 		grid_options.setBorder(grid_options_title);
 		
-		JPanel algorithm_options = new JPanel();
-		Border algorithm_options_title = BorderFactory.createTitledBorder("Algorithm");
-		algorithm_options.add(new JButton("button"));
-		algorithm_options.setBorder(algorithm_options_title);
-		
 		JPanel simulation_options = new JPanel();
 		Border simulation_options_title = BorderFactory.createTitledBorder("Simulation");
-		simulation_options.add(new JButton("button"));
 		simulation_options.setBorder(simulation_options_title);
 		
 		options.add(algorithm_options);
 		options.add(grid_options);
 		options.add(simulation_options);
-		add(options,BorderLayout.CENTER);
+		options.setPreferredSize(new Dimension(250,0));
+		add(options,BorderLayout.EAST);
 	}
 	
 	public void addGrid(int box_X, int box_Y) {
-		JPanel grid = new JPanel();
-		grid.addComponentListener(new ResizeListener());
-		grid.setPreferredSize(new Dimension(700,700));
+		JPanel grid_holder = new JPanel(new GridBagLayout());
+		JPanel grid = new JPanel(new GridLayout(box_X,box_Y));
+		grid_holder.addComponentListener(new ResizeListener(grid));
+		grid.setPreferredSize(new Dimension(715,715));
 		MouseListener addObstacle = new MouseListener() {
 			// Red and green can be removed!!!
 			public void mouseClicked(MouseEvent e) {
@@ -132,7 +155,6 @@ public class GUI extends JFrame {
 			public void mouseReleased(MouseEvent e) {}
 		};
 		
-		grid.setLayout(new GridLayout(box_X,box_Y));
 		Border blackLine = BorderFactory.createLineBorder(Color.BLACK);
 		for(int i=0;i<(box_X*box_Y);i++) {
 			JLabel box = new JLabel();
@@ -143,14 +165,28 @@ public class GUI extends JFrame {
 			box.addMouseListener(addObstacle);
 			grid.add(box);
 		}
-		add(grid,BorderLayout.WEST);
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		grid_holder.add(grid);
+		add(grid_holder,BorderLayout.CENTER);
 	}
 }
 
 class ResizeListener extends ComponentAdapter {
+	private JPanel grid;
+	public ResizeListener(JPanel grid) {
+		this.grid = grid;
+	}
     public void componentResized(ComponentEvent e) {
     	int height = e.getComponent().getSize().height;
-        e.getComponent().setPreferredSize(new Dimension(height,height));
+    	int width = e.getComponent().getSize().width;
+    	if(width<height) {
+    		grid.setPreferredSize(new Dimension(width-20,width-20));
+    	} else {
+    		grid.setPreferredSize(new Dimension(height-20,height-20));
+    	}
     }
 }
+
+
 
