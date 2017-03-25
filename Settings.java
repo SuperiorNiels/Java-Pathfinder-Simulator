@@ -1,7 +1,7 @@
 
 public class Settings {
-	private int maze_x = 9;
-	private int maze_y = 9;
+	private int maze_x = 30;
+	private int maze_y = 30;
 	private Boolean diagonal = false;
 	private String algorithm = "A*";
 	private Maze maze;

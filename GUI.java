@@ -13,6 +13,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.awt.Insets;
 
 import javax.swing.AbstractButton;
@@ -253,8 +254,8 @@ public class GUI extends JFrame {
 		
 		public void toggleObstacle(MouseEvent e) {
 			String name = e.getComponent().getName();
-			int x = Integer.parseInt(name.substring(0,1));
-			int y = Integer.parseInt(name.substring(3,4));
+			int x = Integer.parseInt(name.substring(0,3));
+			int y = Integer.parseInt(name.substring(6,8));
 			Maze maze = settings.getMaze();
 			int[][] matrix = maze.getMatrix();
 			if(matrix[x][y]!=2 && matrix[x][y]!=3) {
@@ -288,8 +289,9 @@ public class GUI extends JFrame {
 		Border blackLine = BorderFactory.createLineBorder(Color.BLACK);
 		for(int i=0;i<maze_y;i++) {
 			for(int j=0;j<maze_x;j++) {
-				JLabel box = new JLabel();
-				box.setName(i+", "+j);
+				DecimalFormat format = new DecimalFormat("000");
+				JLabel box = new JLabel(format.format(i)+", "+format.format(j));
+				box.setName(format.format(i)+", "+format.format(j));
 				box.setBorder(blackLine);
 				box.setOpaque(true);
 				if(matrix[i][j]==1) {
