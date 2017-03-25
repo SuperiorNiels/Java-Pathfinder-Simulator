@@ -86,28 +86,31 @@ public class GUI extends JFrame {
 		JPanel options = new JPanel(new GridLayout(3,0));
 		
 		// ALGORITHM OPTIONS
-		JPanel algorithm_options = new JPanel(new GridLayout(0,1));
+		JPanel algorithm_options = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel algorithm_buttons = new JPanel(new GridLayout(0,1));
 		Border algorithm_options_title = BorderFactory.createTitledBorder("Algorithm");
 		algorithm_options.setBorder(algorithm_options_title);
 		ButtonGroup algorithm = new ButtonGroup();
 		JRadioButton a_star = new JRadioButton("A*");
 		algorithm.add(a_star);
-		algorithm_options.add(a_star);
+		algorithm_buttons.add(a_star);
 		JRadioButton dijkstra = new JRadioButton("Dijkstra");
 		algorithm.add(dijkstra);
-		algorithm_options.add(dijkstra);
+		algorithm_buttons.add(dijkstra);
 		JRadioButton bfs = new JRadioButton("Breadth-first search");
 		algorithm.add(bfs);
-		algorithm_options.add(bfs);
+		algorithm_buttons.add(bfs);
 		JRadioButton dfs = new JRadioButton("Depth-first search");
 		algorithm.add(dfs);
-		algorithm_options.add(dfs);
+		algorithm_buttons.add(dfs);
 		JRadioButton Bfs = new JRadioButton("Best-first search");
 		algorithm.add(Bfs);
-		algorithm_options.add(Bfs);
+		algorithm_buttons.add(Bfs);
+		algorithm_options.add(algorithm_buttons);
 		
 		// GRID OPTIONS
-		JPanel grid_options = new JPanel(new BorderLayout());
+		JPanel grid_options = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel wrapper = new JPanel(new BorderLayout());
 		Border grid_options_title = BorderFactory.createTitledBorder("Grid Options");
 		grid_options.setBorder(grid_options_title);
 		JPanel grid_size = new JPanel(new GridBagLayout());
@@ -131,9 +134,10 @@ public class GUI extends JFrame {
 		c.gridy = labels.length+1;
 		c.insets = new Insets(10,0,0,0); 
 		grid_size.add(submit,c);
-		grid_options.add(grid_size,BorderLayout.WEST);
+		wrapper.add(grid_size,BorderLayout.WEST);
 		JCheckBox diagonal_movement = new JCheckBox("Diagonal movement");
-		grid_options.add(diagonal_movement,BorderLayout.SOUTH);
+		wrapper.add(diagonal_movement,BorderLayout.SOUTH);
+		grid_options.add(wrapper);
 		
 		// SIMULATION OPTIONS
 		JPanel simulation_options = new JPanel(new FlowLayout());
@@ -145,7 +149,6 @@ public class GUI extends JFrame {
 		simulation_options.add(play);
 		JButton next = new JButton("Next Step");
 		simulation_options.add(next);
-		
 		options.add(algorithm_options);
 		options.add(grid_options);
 		options.add(simulation_options);

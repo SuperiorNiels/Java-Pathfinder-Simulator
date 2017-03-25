@@ -15,8 +15,7 @@ public class Main {
 	    catch (IllegalAccessException e) {}
 		
 		GUI window = new GUI("Pathfinder Simulator");
-		window.setBounds(30,30,1000,800);
-		window.setVisible(true);
+		window.createGUI();
 
 	}
 
