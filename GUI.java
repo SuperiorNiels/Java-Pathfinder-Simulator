@@ -12,12 +12,15 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.awt.Insets;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -27,14 +30,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
-	private int box_X = 9;
-	private int box_Y = 9;
 	private String title;
+	private Settings settings = new Settings();
 	public GUI(String title) {
 		this.title = title;
 	}
@@ -47,6 +48,24 @@ public class GUI extends JFrame {
 		/*
 		 * Menu Action Listeners
 		 */
+		ActionListener newAction = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				dispose();
+				GUI window = new GUI("Pathfinder Simulator");
+				window.createGUI();
+			}
+		};
+		ActionListener openAction = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+		        int returnValue = fileChooser.showOpenDialog(null);
+		        if (returnValue == JFileChooser.APPROVE_OPTION) {
+		          File selectedFile = fileChooser.getSelectedFile();
+		          System.out.println(selectedFile.getName());
+		        }
+			}
+		};
 		ActionListener quitAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
@@ -59,8 +78,12 @@ public class GUI extends JFrame {
 		 */
 		JMenuBar menu = new JMenuBar();
 		JMenu file = new JMenu("File");
-		file.add(new JMenuItem("New"));
-		file.add(new JMenuItem("Open"));
+		JMenuItem _new = new JMenuItem("New");
+		_new.addActionListener(newAction);
+		file.add(_new);
+		JMenuItem open = new JMenuItem("Open");
+		open.addActionListener(openAction);
+		file.add(open);
 		file.add(new JMenuItem("Save"));
 		file.add(new JMenuItem("Save as..."));
 		file.add(new JSeparator());
@@ -78,7 +101,7 @@ public class GUI extends JFrame {
 		/*
 		 * Create Grid Panel
 		 */
-		addGrid(box_X,box_Y);
+		addGrid();
 				
 		/*
 		 * Create Option Panel
@@ -132,10 +155,17 @@ public class GUI extends JFrame {
 		JButton submit = new JButton("Set Size");
 		c.gridx = 2;
 		c.gridy = labels.length+1;
-		c.insets = new Insets(10,0,0,0); 
+		c.insets = new Insets(10,0,0,0);
+		submit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+			}
+		});
 		grid_size.add(submit,c);
 		wrapper.add(grid_size,BorderLayout.WEST);
 		JCheckBox diagonal_movement = new JCheckBox("Diagonal movement");
+		diagonal_movement.addActionListener(diagonal);
 		wrapper.add(diagonal_movement,BorderLayout.SOUTH);
 		grid_options.add(wrapper);
 		
@@ -162,40 +192,78 @@ public class GUI extends JFrame {
 		setVisible(true);
 	}
 	
-	public void addGrid(int box_X, int box_Y) {
-		JPanel grid_holder = new JPanel(new GridBagLayout());
-		JPanel grid = new JPanel(new GridLayout(box_X,box_Y));
-		grid_holder.addComponentListener(new ResizeListener(grid));
-		grid.setPreferredSize(new Dimension(715,715));
-		MouseListener addObstacle = new MouseListener() {
-			public void mouseClicked(MouseEvent e) {
-				Color background = e.getComponent().getBackground();
-				if(background!=Color.GREEN && background!=Color.RED) {
-					if(background==Color.BLACK) {
-						e.getComponent().setBackground(UIManager.getColor("Label.background"));
-						// Remove obstacle from maze
-					} else {
-						e.getComponent().setBackground(Color.BLACK);
-						// Add obstacle to Maze
-					}
+	ActionListener diagonal = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			AbstractButton abstractButton = (AbstractButton) e.getSource();
+	        boolean selected = abstractButton.getModel().isSelected();
+			settings.setDiagonal(selected);
+			System.out.println(settings.getDiagonal());
+		}
+	};
+	
+	/*
+	 * MouseListener for grid, gets maze from Settings,
+	 * then gets x and y coordinates
+	 * This Listener adds and removes obstacles
+	 * It also changes the color of the JLabels if needed.
+	 */
+	MouseListener addObstacle = new MouseListener() {
+		public void mouseClicked(MouseEvent e) {
+			String name = e.getComponent().getName();
+			int x = Integer.parseInt(name.substring(0,1));
+			int y = Integer.parseInt(name.substring(3,4));
+			Maze maze = settings.getMaze();
+			int[][] matrix = maze.getMatrix();
+			if(matrix[x][y]!=2 && matrix[x][y]!=3) {
+				if(matrix[x][y]==0) {
+					maze.addObstacle(x,y);
+					e.getComponent().setBackground(Color.BLACK);
+				} else {
+					maze.removeObstacle(x,y);
+					e.getComponent().setBackground(Color.WHITE);
 				}
 			}
-			public void mousePressed(MouseEvent e) {}
-			public void mouseEntered(MouseEvent e) {}
-			public void mouseExited(MouseEvent e) {}
-			public void mouseReleased(MouseEvent e) {}
-		};
+		}
+		public void mousePressed(MouseEvent e) {}
+		public void mouseEntered(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {}
+		public void mouseReleased(MouseEvent e) {}
+	};
+	
+	/*
+	 * Get grid from settings, and create JPanel
+	 * Then add it to the JFrame
+	 */
+	public void addGrid() {
+		int[][] matrix = settings.getMaze().getMatrix();
+		int maze_x = settings.getMaze_x();
+		int maze_y = settings.getMaze_y();
+		JPanel grid_holder = new JPanel(new GridBagLayout());
+		JPanel grid = new JPanel(new GridLayout(maze_x,maze_y));
+		grid_holder.addComponentListener(new ResizeListener(grid));
+		grid.setPreferredSize(new Dimension(715,715));
 		
 		Border blackLine = BorderFactory.createLineBorder(Color.BLACK);
-		for(int i=0;i<(box_X*box_Y);i++) {
-			JLabel box = new JLabel();
-			box.setBorder(blackLine);
-			box.setOpaque(true);
-			if(i==0){box.setBackground(Color.GREEN);}
-			if(i==(box_X*box_Y)-1){box.setBackground(Color.RED);}
-			box.addMouseListener(addObstacle);
-			grid.add(box);
+		for(int i=0;i<maze_y;i++) {
+			for(int j=0;j<maze_x;j++) {
+				JLabel box = new JLabel();
+				box.setName(i+", "+j);
+				box.setBorder(blackLine);
+				box.setOpaque(true);
+				if(matrix[i][j]==1) {
+					box.setBackground(Color.BLACK);
+				} else if(matrix[i][j]==2) {
+					box.setBackground(Color.GREEN);
+				} else if(matrix[i][j]==3) {
+					box.setBackground(Color.RED);
+				} else {
+					box.setBackground(Color.WHITE);
+				}
+				box.addMouseListener(addObstacle);
+				grid.add(box);
+			}
 		}
+		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		grid_holder.add(grid,c);
