@@ -254,8 +254,9 @@ public class GUI extends JFrame {
 		
 		public void toggleObstacle(MouseEvent e) {
 			String name = e.getComponent().getName();
-			int x = Integer.parseInt(name.substring(0,3));
-			int y = Integer.parseInt(name.substring(6,8));
+			int x = Integer.parseInt(name.substring(0,2));
+			int y = Integer.parseInt(name.substring(4,6));
+			System.out.println(x+"  "+y);
 			Maze maze = settings.getMaze();
 			int[][] matrix = maze.getMatrix();
 			if(matrix[x][y]!=2 && matrix[x][y]!=3) {
@@ -289,8 +290,8 @@ public class GUI extends JFrame {
 		Border blackLine = BorderFactory.createLineBorder(Color.BLACK);
 		for(int i=0;i<maze_y;i++) {
 			for(int j=0;j<maze_x;j++) {
-				DecimalFormat format = new DecimalFormat("000");
-				JLabel box = new JLabel(format.format(i)+", "+format.format(j));
+				DecimalFormat format = new DecimalFormat("00");
+				JLabel box = new JLabel();
 				box.setName(format.format(i)+", "+format.format(j));
 				box.setBorder(blackLine);
 				box.setOpaque(true);
