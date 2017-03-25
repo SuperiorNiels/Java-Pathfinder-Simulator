@@ -58,5 +58,6 @@ public class Maze {
 			}
 			System.out.print("\n");
 		}
+		System.out.print("\n");
 	}
 }

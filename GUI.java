@@ -73,6 +73,13 @@ public class GUI extends JFrame {
 			}
 		};
 		
+		// Testing
+		ActionListener printMatrix = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				settings.getMaze().printMaze();
+			}
+		};
+		
 		/*
 		 * Add Menu Bar
 		 */
@@ -91,11 +98,14 @@ public class GUI extends JFrame {
 		JMenuItem quit = new JMenuItem("Quit");
 		quit.addActionListener(quitAction);
 		file.add(quit);
-		JMenu settings = new JMenu("Settings");
-		settings.add(new JMenuItem("Grid width"));
-		settings.add(new JMenuItem("Grid height"));
+		JMenu settings_tab = new JMenu("Settings");
+		settings_tab.add(new JMenuItem("Grid width"));
+		settings_tab.add(new JMenuItem("Grid height"));
+		JMenuItem print = new JMenuItem("Print Matrix");
+		print.addActionListener(printMatrix);
+		settings_tab.add(print);
 		menu.add(file);
-		menu.add(settings);
+		menu.add(settings_tab);
 		setJMenuBar(menu);		
 		
 		/*
@@ -115,19 +125,24 @@ public class GUI extends JFrame {
 		algorithm_options.setBorder(algorithm_options_title);
 		ButtonGroup algorithm = new ButtonGroup();
 		JRadioButton a_star = new JRadioButton("A*");
+		a_star.addActionListener(changeAlgorithm);
 		algorithm.add(a_star);
 		algorithm_buttons.add(a_star);
 		JRadioButton dijkstra = new JRadioButton("Dijkstra");
 		algorithm.add(dijkstra);
+		dijkstra.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(dijkstra);
 		JRadioButton bfs = new JRadioButton("Breadth-first search");
 		algorithm.add(bfs);
+		bfs.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(bfs);
 		JRadioButton dfs = new JRadioButton("Depth-first search");
 		algorithm.add(dfs);
+		dfs.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(dfs);
 		JRadioButton Bfs = new JRadioButton("Best-first search");
 		algorithm.add(Bfs);
+		Bfs.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(Bfs);
 		algorithm_options.add(algorithm_buttons);
 		
@@ -192,12 +207,18 @@ public class GUI extends JFrame {
 		setVisible(true);
 	}
 	
+	ActionListener changeAlgorithm = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			AbstractButton button = (AbstractButton) e.getSource();
+			settings.setAlgorithm(button.getText());
+		}
+	};
+	
 	ActionListener diagonal = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			AbstractButton abstractButton = (AbstractButton) e.getSource();
 	        boolean selected = abstractButton.getModel().isSelected();
 			settings.setDiagonal(selected);
-			System.out.println(settings.getDiagonal());
 		}
 	};
 	
@@ -207,28 +228,49 @@ public class GUI extends JFrame {
 	 * This Listener adds and removes obstacles
 	 * It also changes the color of the JLabels if needed.
 	 */
+	Boolean mouseDown = false;
+	Color startColor;
 	MouseListener addObstacle = new MouseListener() {
-		public void mouseClicked(MouseEvent e) {
+		public void mouseClicked(MouseEvent e) {}
+		public void mousePressed(MouseEvent e) {
+			if(e.getButton()==MouseEvent.BUTTON1) {
+				mouseDown = true;
+				startColor = e.getComponent().getBackground();
+				toggleObstacle(e);
+			}
+		}
+		public void mouseEntered(MouseEvent e) {
+			if(mouseDown) {
+				toggleObstacle(e);
+			}
+		}
+		public void mouseReleased(MouseEvent e) {
+			if(e.getButton()==MouseEvent.BUTTON1) {
+				mouseDown = false;
+			}
+		}
+		public void mouseExited(MouseEvent e) {}
+		
+		public void toggleObstacle(MouseEvent e) {
 			String name = e.getComponent().getName();
 			int x = Integer.parseInt(name.substring(0,1));
 			int y = Integer.parseInt(name.substring(3,4));
 			Maze maze = settings.getMaze();
 			int[][] matrix = maze.getMatrix();
 			if(matrix[x][y]!=2 && matrix[x][y]!=3) {
-				if(matrix[x][y]==0) {
-					maze.addObstacle(x,y);
-					e.getComponent().setBackground(Color.BLACK);
+				if(startColor==Color.WHITE) {
+					if(matrix[x][y]==0) {
+						maze.addObstacle(x,y);
+						e.getComponent().setBackground(Color.BLACK);
+					}
 				} else {
 					maze.removeObstacle(x,y);
 					e.getComponent().setBackground(Color.WHITE);
 				}
 			}
 		}
-		public void mousePressed(MouseEvent e) {}
-		public void mouseEntered(MouseEvent e) {}
-		public void mouseExited(MouseEvent e) {}
-		public void mouseReleased(MouseEvent e) {}
 	};
+	
 	
 	/*
 	 * Get grid from settings, and create JPanel
