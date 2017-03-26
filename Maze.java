@@ -52,8 +52,8 @@ public class Maze {
 	}
 	
 	public void printMaze() {
-		for(int i=0;i<Y_size;i++) {
-			for(int j=0;j<X_size;j++) {
+		for(int i=0;i<X_size;i++) {
+			for(int j=0;j<Y_size;j++) {
 				System.out.print(maze[i][j]);
 			}
 			System.out.print("\n");

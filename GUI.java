@@ -316,23 +316,23 @@ public class GUI extends JFrame {
 	 */
 	int x_old = 0;
 	int y_old = 0;
+	int x_new = 0;
+	int y_new = 0;
 	Color startColor;
 	Boolean mouseDown = false;
-	Boolean moved = false;
 	Boolean movingPoint = false;
 	MouseListener addObstacle = new MouseListener() {
 		public void mouseClicked(MouseEvent e) {}
 		public void mousePressed(MouseEvent e) {
 			if(e.getButton()==MouseEvent.BUTTON1) {
 				mouseDown = true;
-				moved = false;
 				startColor = e.getComponent().getBackground();
 				if (startColor == Color.RED || startColor == Color.GREEN) {
 					String name = e.getComponent().getName();
-					x_old = Integer.parseInt(name.substring(0,2));
-					y_old = Integer.parseInt(name.substring(4,6));
+					x_old = x_new = Integer.parseInt(name.substring(0,2));
+					y_old = y_new = Integer.parseInt(name.substring(4,6));
 					movingPoint = true;
-					removePoint(e);
+					e.getComponent().setBackground(Color.WHITE);
 				} else {
 					toggleObstacle(e);
 				}
@@ -341,7 +341,6 @@ public class GUI extends JFrame {
 		public void mouseEntered(MouseEvent e) {
 			if(mouseDown) {
 				if(movingPoint==true) {
-					moved = true;
 					paintPoint(e);
 				} else {
 					toggleObstacle(e);
@@ -352,15 +351,32 @@ public class GUI extends JFrame {
 			if(e.getButton()==MouseEvent.BUTTON1) {
 				mouseDown = false;				
 				if(movingPoint) {
-					if(!moved) {paintPoint(e);}
+					changePoint(e);
 					movingPoint = false;
+					repaintMatrix();
 				}
 			}
-			repaintMatrix();
 		}
 		public void mouseExited(MouseEvent e) {
 			if(movingPoint) {
 				removePoint(e);	
+			}
+		}
+		public void changePoint(MouseEvent e) {
+			Maze maze = settings.getMaze();
+			int[][] matrix = maze.getMatrix();
+			String name = e.getComponent().getName();
+			int x = Integer.parseInt(name.substring(0,2));
+			int y = Integer.parseInt(name.substring(4,6));
+			if(startColor==Color.GREEN) {
+				if(matrix[x][y]!=3) {
+					maze.moveStartPoint(x_old,y_old,x_new,y_new);
+				}
+			}
+			if(startColor==Color.RED) {
+				if(matrix[x][y]!=2) {
+					maze.moveStopPoint(x_old,y_old,x_new,y_new);
+				}
 			}
 		}
 		public void paintPoint(MouseEvent e) {
@@ -372,16 +388,15 @@ public class GUI extends JFrame {
 			if(startColor==Color.GREEN) {
 				if(matrix[x][y]!=3) {
 					e.getComponent().setBackground(startColor);
-					maze.moveStartPoint(x_old,y_old,x,y);
+					x_new = x;y_new =y;
 				}
 			}
 			if(startColor==Color.RED) {
 				if(matrix[x][y]!=2) {
 					e.getComponent().setBackground(startColor);
-					maze.moveStopPoint(x_old,y_old,x,y);
+					x_new = x;y_new =y;
 				}
 			}
-			x_old = x;y_old = y;
 		}
 		public void removePoint(MouseEvent e) {
 			Maze maze = settings.getMaze();
@@ -391,6 +406,10 @@ public class GUI extends JFrame {
 			int y = Integer.parseInt(name.substring(4,6));
 			if(matrix[x][y]==1) {
 				e.getComponent().setBackground(Color.BLACK);
+			} else if(matrix[x][y]==2){
+				e.getComponent().setBackground(Color.GREEN);
+			} else if(matrix[x][y]==3){
+				e.getComponent().setBackground(Color.RED);
 			} else {
 				e.getComponent().setBackground(Color.WHITE);
 			}
