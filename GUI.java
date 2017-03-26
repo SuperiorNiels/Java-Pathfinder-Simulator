@@ -279,35 +279,88 @@ public class GUI extends JFrame {
 	 * This Listener adds and removes obstacles
 	 * It also changes the color of the JLabels if needed.
 	 */
-	Boolean mouseDown = false;
+	int x_old = 0;
+	int y_old = 0;
 	Color startColor;
+	Boolean mouseDown = false;
+	Boolean movingPoint = false;
 	MouseListener addObstacle = new MouseListener() {
 		public void mouseClicked(MouseEvent e) {}
 		public void mousePressed(MouseEvent e) {
 			if(e.getButton()==MouseEvent.BUTTON1) {
 				mouseDown = true;
 				startColor = e.getComponent().getBackground();
-				toggleObstacle(e);
+				if (startColor == Color.RED || startColor == Color.GREEN) {
+					String name = e.getComponent().getName();
+					x_old = Integer.parseInt(name.substring(0,2));
+					y_old = Integer.parseInt(name.substring(4,6));
+					movingPoint = true;
+					removePoint(e);
+				} else {
+					toggleObstacle(e);
+				}
 			}
 		}
 		public void mouseEntered(MouseEvent e) {
 			if(mouseDown) {
-				toggleObstacle(e);
+				if(movingPoint==true) {
+					paintPoint(e);
+				} else {
+					toggleObstacle(e);
+				}
 			}
 		}
 		public void mouseReleased(MouseEvent e) {
 			if(e.getButton()==MouseEvent.BUTTON1) {
-				mouseDown = false;
+				mouseDown = false;				
+				if(movingPoint) {
+					movingPoint = false;
+				}
 			}
 		}
-		public void mouseExited(MouseEvent e) {}
-		
-		public void toggleObstacle(MouseEvent e) {
+		public void mouseExited(MouseEvent e) {
+			if(movingPoint) {
+				removePoint(e);	
+			}
+		}
+		public void paintPoint(MouseEvent e) {
+			Maze maze = settings.getMaze();
+			int[][] matrix = maze.getMatrix();
 			String name = e.getComponent().getName();
 			int x = Integer.parseInt(name.substring(0,2));
 			int y = Integer.parseInt(name.substring(4,6));
+			if(startColor==Color.GREEN) {
+				if(matrix[x][y]!=3) {
+					e.getComponent().setBackground(startColor);
+					maze.moveStartPoint(x_old,y_old,x,y);
+				}
+			}
+			if(startColor==Color.RED) {
+				if(matrix[x][y]!=2) {
+					e.getComponent().setBackground(startColor);
+					maze.moveStopPoint(x_old,y_old,x,y);
+				}
+			}
+			x_old = x;y_old = y;
+		}
+		public void removePoint(MouseEvent e) {
 			Maze maze = settings.getMaze();
 			int[][] matrix = maze.getMatrix();
+			String name = e.getComponent().getName();
+			int x = Integer.parseInt(name.substring(0,2));
+			int y = Integer.parseInt(name.substring(4,6));
+			if(matrix[x][y]==1) {
+				e.getComponent().setBackground(Color.BLACK);
+			} else {
+				e.getComponent().setBackground(Color.WHITE);
+			}
+		}
+		public void toggleObstacle(MouseEvent e) {
+			Maze maze = settings.getMaze();
+			int[][] matrix = maze.getMatrix();
+			String name = e.getComponent().getName();
+			int x = Integer.parseInt(name.substring(0,2));
+			int y = Integer.parseInt(name.substring(4,6));
 			if(matrix[x][y]!=2 && matrix[x][y]!=3) {
 				if(startColor==Color.WHITE) {
 					if(matrix[x][y]==0) {
