@@ -94,8 +94,8 @@ public class GUI extends JFrame {
 				int[][] matrix = maze.getMatrix();
 				int maze_x = settings.getMaze_x();
 				int maze_y = settings.getMaze_y();
-				for(int i=0;i<maze_y;i++) {
-					for(int j=0;j<maze_x;j++) {
+				for(int i=0;i<maze_x;i++) {
+					for(int j=0;j<maze_y;j++) {
 						if(matrix[i][j]!=2 && matrix[i][j]!=3) {
 							maze.addObstacle(i,j);
 							JLabel temp = grid_labels.get(i+" "+j);
@@ -112,8 +112,8 @@ public class GUI extends JFrame {
 				int[][] matrix = maze.getMatrix();
 				int maze_x = settings.getMaze_x();
 				int maze_y = settings.getMaze_y();
-				for(int i=0;i<maze_y;i++) {
-					for(int j=0;j<maze_x;j++) {
+				for(int i=0;i<maze_x;i++) {
+					for(int j=0;j<maze_y;j++) {
 						if(matrix[i][j]!=2 && matrix[i][j]!=3) {
 							maze.removeObstacle(i,j);
 							JLabel temp = grid_labels.get(i+" "+j);
@@ -418,8 +418,8 @@ public class GUI extends JFrame {
 			int[][] matrix = maze.getMatrix();
 			int maze_x = settings.getMaze_x();
 			int maze_y = settings.getMaze_y();
-			for(int i=0;i<maze_y;i++) {
-				for(int j=0;j<maze_x;j++) {
+			for(int i=0;i<maze_x;i++) {
+				for(int j=0;j<maze_y;j++) {
 					JLabel temp = grid_labels.get(i+" "+j);
 					if(matrix[i][j]==1) {
 						temp.setBackground(Color.BLACK);
@@ -449,8 +449,8 @@ public class GUI extends JFrame {
 		grid.setPreferredSize(new Dimension(width,width));
 		
 		Border blackLine = BorderFactory.createLineBorder(Color.BLACK);
-		for(int i=0;i<maze_y;i++) {
-			for(int j=0;j<maze_x;j++) {
+		for(int i=0;i<maze_x;i++) {
+			for(int j=0;j<maze_y;j++) {
 				DecimalFormat format = new DecimalFormat("00");
 				JLabel box = new JLabel();
 				box.setName(format.format(i)+", "+format.format(j));
