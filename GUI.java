@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
@@ -39,6 +40,7 @@ public class GUI extends JFrame {
 	private String title;
 	private Settings settings = new Settings();
 	HashMap<String, JLabel> grid_labels = new HashMap<String,JLabel>();
+	JPanel grid_holder;
 	public GUI(String title) {
 		this.title = title;
 		createGUI(settings);
@@ -141,8 +143,8 @@ public class GUI extends JFrame {
 		quit.addActionListener(quitAction);
 		file.add(quit);
 		JMenu settings_tab = new JMenu("Settings");
-		settings_tab.add(new JMenuItem("Grid width"));
-		settings_tab.add(new JMenuItem("Grid height"));
+		//settings_tab.add(new JMenuItem("Grid width"));
+		//settings_tab.add(new JMenuItem("Grid height"));
 		JMenuItem print = new JMenuItem("Print Matrix");
 		print.addActionListener(printMatrix);
 		settings_tab.add(print);
@@ -159,7 +161,8 @@ public class GUI extends JFrame {
 		/*
 		 * Create Grid Panel
 		 */
-		addGrid();
+		grid_holder = new JPanel(new GridBagLayout());
+		addGrid(grid_holder,715);
 		
 		/*
 		 * Option panel actions
@@ -223,6 +226,7 @@ public class GUI extends JFrame {
 		c.gridy = 0;
 		grid_size.add(new JLabel("Grid size: "),c);
 		String[] labels = {"X: ", "Y: "};
+		HashMap<String, JTextField> size_fields = new HashMap<String, JTextField>();
 		for(int i=0;i<labels.length;i++) {
 			JLabel label = new JLabel(labels[i], JLabel.TRAILING);
 			c.gridx = 1;
@@ -230,6 +234,7 @@ public class GUI extends JFrame {
 			grid_size.add(label,c);
 		    JTextField textField = new JTextField(10);
 		    c.gridx = 2;
+		    size_fields.put(labels[i], textField);
 		    label.setLabelFor(textField);
 		    grid_size.add(textField,c);
 		}
@@ -239,7 +244,37 @@ public class GUI extends JFrame {
 		c.insets = new Insets(10,0,0,0);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				Boolean error = false;
+				int test = 0;
+				for(String label : labels) {
+					JTextField temp = size_fields.get(label);
+					String text = temp.getText();
+					try {
+						int number = Integer.parseInt(text);
+						if(number==settings.getMaze_x() || number==settings.getMaze_y()) {
+							test++;
+						}
+						if(label == "X: ") {settings.setMaze_x(number);}
+						if(label == "Y: ") {settings.setMaze_y(number);}
+					} catch(NumberFormatException n) {
+						error = true;
+					}	
+				}
+				if(error) {JOptionPane.showMessageDialog(null, "Please input integers for X and Y.");}
+				if(test!=2) {
+					Dimension size = grid_holder.getBounds().getSize();
+					remove(grid_holder);
+					grid_holder = new JPanel(new GridBagLayout());
+					grid_labels = new HashMap<String,JLabel>();
+					
+					if(size.width<=size.height) {
+						addGrid(grid_holder,size.width-20);
+					} else {
+						addGrid(grid_holder,size.height-20);
+					}
+					revalidate();
+					repaint();
+				}
 				
 			}
 		});
@@ -380,14 +415,13 @@ public class GUI extends JFrame {
 	 * Get grid from settings, and create JPanel
 	 * Then add it to the JFrame
 	 */
-	public void addGrid() {
+	public void addGrid(JPanel grid_holder, int width) {
 		int[][] matrix = settings.getMaze().getMatrix();
 		int maze_x = settings.getMaze_x();
 		int maze_y = settings.getMaze_y();
-		JPanel grid_holder = new JPanel(new GridBagLayout());
 		JPanel grid = new JPanel(new GridLayout(maze_x,maze_y));
 		grid_holder.addComponentListener(new ResizeListener(grid));
-		grid.setPreferredSize(new Dimension(715,715));
+		grid.setPreferredSize(new Dimension(width,width));
 		
 		Border blackLine = BorderFactory.createLineBorder(Color.BLACK);
 		for(int i=0;i<maze_y;i++) {

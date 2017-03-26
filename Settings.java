@@ -15,6 +15,7 @@ public class Settings {
 	
 	public void setMaze_x(int maze_x) {
 		this.maze_x = maze_x;
+		maze.setGridSize(maze_x, maze_y);
 	}
 	
 	public int getMaze_y() {
@@ -23,6 +24,7 @@ public class Settings {
 	
 	public void setMaze_y(int maze_y) {
 		this.maze_y = maze_y;
+		maze.setGridSize(maze_x, maze_y);
 	}
 
 	public Maze getMaze() {
