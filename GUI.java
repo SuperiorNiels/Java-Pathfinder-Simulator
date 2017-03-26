@@ -318,12 +318,14 @@ public class GUI extends JFrame {
 	int y_old = 0;
 	Color startColor;
 	Boolean mouseDown = false;
+	Boolean moved = false;
 	Boolean movingPoint = false;
 	MouseListener addObstacle = new MouseListener() {
 		public void mouseClicked(MouseEvent e) {}
 		public void mousePressed(MouseEvent e) {
 			if(e.getButton()==MouseEvent.BUTTON1) {
 				mouseDown = true;
+				moved = false;
 				startColor = e.getComponent().getBackground();
 				if (startColor == Color.RED || startColor == Color.GREEN) {
 					String name = e.getComponent().getName();
@@ -339,6 +341,7 @@ public class GUI extends JFrame {
 		public void mouseEntered(MouseEvent e) {
 			if(mouseDown) {
 				if(movingPoint==true) {
+					moved = true;
 					paintPoint(e);
 				} else {
 					toggleObstacle(e);
@@ -349,9 +352,11 @@ public class GUI extends JFrame {
 			if(e.getButton()==MouseEvent.BUTTON1) {
 				mouseDown = false;				
 				if(movingPoint) {
+					if(!moved) {paintPoint(e);}
 					movingPoint = false;
 				}
 			}
+			repaintMatrix();
 		}
 		public void mouseExited(MouseEvent e) {
 			if(movingPoint) {
@@ -405,6 +410,26 @@ public class GUI extends JFrame {
 				} else {
 					maze.removeObstacle(x,y);
 					e.getComponent().setBackground(Color.WHITE);
+				}
+			}
+		}
+		public void repaintMatrix() {
+			Maze maze = settings.getMaze();
+			int[][] matrix = maze.getMatrix();
+			int maze_x = settings.getMaze_x();
+			int maze_y = settings.getMaze_y();
+			for(int i=0;i<maze_y;i++) {
+				for(int j=0;j<maze_x;j++) {
+					JLabel temp = grid_labels.get(i+" "+j);
+					if(matrix[i][j]==1) {
+						temp.setBackground(Color.BLACK);
+					} else if(matrix[i][j]==2) {
+						temp.setBackground(Color.GREEN);
+					} else if(matrix[i][j]==3) {
+						temp.setBackground(Color.RED);
+					} else {
+						temp.setBackground(Color.WHITE);
+					}
 				}
 			}
 		}
