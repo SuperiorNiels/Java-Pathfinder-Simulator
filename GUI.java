@@ -15,6 +15,8 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.awt.Insets;
 
 import javax.swing.AbstractButton;
@@ -194,6 +196,7 @@ public class GUI extends JFrame {
 		algorithm_options.setBorder(algorithm_options_title);
 		ButtonGroup algorithm = new ButtonGroup();
 		JRadioButton a_star = new JRadioButton("A*");
+		a_star.setSelected(true);
 		a_star.addActionListener(changeAlgorithm);
 		algorithm.add(a_star);
 		algorithm_buttons.add(a_star);
@@ -254,19 +257,27 @@ public class GUI extends JFrame {
 						if(number==settings.getMaze_x() || number==settings.getMaze_y()) {
 							test++;
 						}
-						if(label == "X: ") {settings.setMaze_x(number);}
-						if(label == "Y: ") {settings.setMaze_y(number);}
+						if(number>0 && !error) {
+							if(label == "X: ") {settings.setMaze_x(number);}
+							if(label == "Y: ") {settings.setMaze_y(number);}
+						} else {error = true;}
 					} catch(NumberFormatException n) {
 						error = true;
 					}	
 				}
-				if(error) {JOptionPane.showMessageDialog(null, "Please input integers for X and Y.");}
-				if(test!=2) {
+				if(error) {JOptionPane.showMessageDialog(null, "Please input (positive) integers for X and Y.");}
+				if(test!=2 && error==false) {
 					Dimension size = grid_holder.getBounds().getSize();
 					remove(grid_holder);
 					grid_holder = new JPanel(new GridBagLayout());
-					grid_labels = new HashMap<String,JLabel>();
+					Iterator<Entry<String, JLabel>> it = grid_labels.entrySet().iterator();
+				    while (it.hasNext()) {
+				        Entry<String, JLabel> pair = it.next();
+				        remove(pair.getValue());
+				        it.remove();
+				    }
 					
+					grid_labels = new HashMap<String,JLabel>();
 					if(size.width<=size.height) {
 						addGrid(grid_holder,size.width-20);
 					} else {
