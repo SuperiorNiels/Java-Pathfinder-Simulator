@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.awt.Insets;
 
 import javax.swing.AbstractButton;
@@ -37,11 +38,16 @@ import javax.swing.border.Border;
 public class GUI extends JFrame {
 	private String title;
 	private Settings settings = new Settings();
+	HashMap<String, JLabel> grid_labels = new HashMap<String,JLabel>();
 	public GUI(String title) {
 		this.title = title;
+		createGUI(settings);
 	}
 	
-	public void createGUI() {
+	/*
+	 * Create GUI with the current settings
+	 */
+	public void createGUI(Settings settings) {
 		setTitle(title);
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -53,8 +59,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 				dispose();
-				GUI window = new GUI("Pathfinder Simulator");
-				window.createGUI();
+				new GUI("Pathfinder Simulator");
 			}
 		};
 		ActionListener openAction = new ActionListener() {
@@ -74,10 +79,46 @@ public class GUI extends JFrame {
 			}
 		};
 		
-		// Testing
+		// Matrix actions (temp)
 		ActionListener printMatrix = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				settings.getMaze().printMaze();
+			}
+		};
+		
+		ActionListener setAllObstacle = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Maze maze = settings.getMaze();
+				int[][] matrix = maze.getMatrix();
+				int maze_x = settings.getMaze_x();
+				int maze_y = settings.getMaze_y();
+				for(int i=0;i<maze_y;i++) {
+					for(int j=0;j<maze_x;j++) {
+						if(matrix[i][j]!=2 && matrix[i][j]!=3) {
+							maze.addObstacle(i,j);
+							JLabel temp = grid_labels.get(i+" "+j);
+							temp.setBackground(Color.BLACK);
+						}
+					}
+				}
+			}
+		};
+		
+		ActionListener setNoObstacle = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Maze maze = settings.getMaze();
+				int[][] matrix = maze.getMatrix();
+				int maze_x = settings.getMaze_x();
+				int maze_y = settings.getMaze_y();
+				for(int i=0;i<maze_y;i++) {
+					for(int j=0;j<maze_x;j++) {
+						if(matrix[i][j]!=2 && matrix[i][j]!=3) {
+							maze.removeObstacle(i,j);
+							JLabel temp = grid_labels.get(i+" "+j);
+							temp.setBackground(Color.WHITE);
+						}
+					}
+				}
 			}
 		};
 		
@@ -105,6 +146,12 @@ public class GUI extends JFrame {
 		JMenuItem print = new JMenuItem("Print Matrix");
 		print.addActionListener(printMatrix);
 		settings_tab.add(print);
+		JMenuItem setAllBlack = new JMenuItem("Full obstacle");
+		setAllBlack.addActionListener(setAllObstacle);
+		settings_tab.add(setAllBlack);
+		JMenuItem setAllWhite = new JMenuItem("No obstacle");
+		setAllWhite.addActionListener(setNoObstacle);
+		settings_tab.add(setAllWhite);
 		menu.add(file);
 		menu.add(settings_tab);
 		setJMenuBar(menu);		
@@ -113,6 +160,24 @@ public class GUI extends JFrame {
 		 * Create Grid Panel
 		 */
 		addGrid();
+		
+		/*
+		 * Option panel actions
+		 */
+		ActionListener changeAlgorithm = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AbstractButton button = (AbstractButton) e.getSource();
+				settings.setAlgorithm(button.getText());
+			}
+		};
+		
+		ActionListener diagonal = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AbstractButton abstractButton = (AbstractButton) e.getSource();
+		        boolean selected = abstractButton.getModel().isSelected();
+				settings.setDiagonal(selected);
+			}
+		};
 				
 		/*
 		 * Create Option Panel
@@ -208,21 +273,6 @@ public class GUI extends JFrame {
 		setVisible(true);
 	}
 	
-	ActionListener changeAlgorithm = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			AbstractButton button = (AbstractButton) e.getSource();
-			settings.setAlgorithm(button.getText());
-		}
-	};
-	
-	ActionListener diagonal = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			AbstractButton abstractButton = (AbstractButton) e.getSource();
-	        boolean selected = abstractButton.getModel().isSelected();
-			settings.setDiagonal(selected);
-		}
-	};
-	
 	/*
 	 * MouseListener for grid, gets maze from Settings,
 	 * then gets x and y coordinates
@@ -256,7 +306,6 @@ public class GUI extends JFrame {
 			String name = e.getComponent().getName();
 			int x = Integer.parseInt(name.substring(0,2));
 			int y = Integer.parseInt(name.substring(4,6));
-			System.out.println(x+"  "+y);
 			Maze maze = settings.getMaze();
 			int[][] matrix = maze.getMatrix();
 			if(matrix[x][y]!=2 && matrix[x][y]!=3) {
@@ -305,6 +354,7 @@ public class GUI extends JFrame {
 					box.setBackground(Color.WHITE);
 				}
 				box.addMouseListener(addObstacle);
+				grid_labels.put(i+" "+j, box);
 				grid.add(box);
 			}
 		}

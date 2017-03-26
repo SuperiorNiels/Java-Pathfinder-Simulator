@@ -14,8 +14,7 @@ public class Main {
 	    catch (InstantiationException e) {}
 	    catch (IllegalAccessException e) {}
 		
-		GUI window = new GUI("Pathfinder Simulator");
-		window.createGUI();
+		new GUI("Pathfinder Simulator");
 
 	}
 
