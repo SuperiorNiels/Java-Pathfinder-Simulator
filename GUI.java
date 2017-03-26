@@ -266,7 +266,7 @@ public class GUI extends JFrame {
 					}	
 				}
 				if(error) {JOptionPane.showMessageDialog(null, "Please input (positive) integers for X and Y.");}
-				if(test!=2 && error==false) {
+				if(test!=0 && error==false) {
 					Dimension size = grid_holder.getBounds().getSize();
 					remove(grid_holder);
 					grid_holder = new JPanel(new GridBagLayout());
