@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class FileHandler {
 	private Settings settings;
@@ -10,6 +11,9 @@ public class FileHandler {
 		this.settings = settings;
 	}
 	
+	/*
+	 * Saving + extra functions
+	 */
 	public void save() {
 		if(settings.getPath()=="") {
 			JFileChooser fileChooser = new JFileChooser();
@@ -17,14 +21,16 @@ public class FileHandler {
 	        if (returnValue == JFileChooser.APPROVE_OPTION) {
 	        	File selectedFile = fileChooser.getSelectedFile();
 	        	String name = selectedFile.getName();
-	        	String[] register = {"txt",".png",".jpg",".jpeg",".html",".docx",".gif",".","/"};
+	        	String[] register = {"txt",".png",".jpg",".jpeg",".html",".docx",".gif",".maze",".","/"};
 	           	name = name.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
 	           	name = removeExt(name, register);
 	        	name = name + ".maze";
 	        	name = selectedFile.getAbsolutePath().replace(selectedFile.getName(), name);
 	        	File to_write = new File(name);
+	        	selectedFile = null;
 	        	settings.setPath(to_write.getAbsolutePath());
 	        	writeToFile(to_write);
+	        	to_write = null;
 	        }
 		} else {
 			String path = settings.getPath();
@@ -39,14 +45,16 @@ public class FileHandler {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
         	File selectedFile = fileChooser.getSelectedFile();
         	String name = selectedFile.getName();
-        	String[] register = {"txt",".png",".jpg",".jpeg",".html",".docx",".gif",".","/"};
+        	String[] register = {"txt",".png",".jpg",".jpeg",".html",".docx",".gif",".maze",".","/"};
            	name = name.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
            	name = removeExt(name, register);
         	name = name + ".maze";
         	name = selectedFile.getAbsolutePath().replace(selectedFile.getName(), name);
         	File to_write = new File(name);
+        	selectedFile = null;
         	settings.setPath(to_write.getAbsolutePath());
         	writeToFile(to_write);
+        	to_write = null;
         }
 	}
 	
@@ -55,15 +63,6 @@ public class FileHandler {
 			string = string.replace(ext, "");
 		}
 		return string;
-	}
-	
-	public void open() {
-		JFileChooser fileChooser = new JFileChooser();
-        int returnValue = fileChooser.showOpenDialog(null);
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-        	File selectedFile = fileChooser.getSelectedFile();
-        	System.out.println(selectedFile.getName());
-        }
 	}
 	
 	public void writeToFile(File selectedFile) {
@@ -104,4 +103,39 @@ public class FileHandler {
 			e.printStackTrace();
 		}
 	}
+	
+	/*
+	 * Opening + extra functions
+	 */
+	public void open() {
+		JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+        	File selectedFile = fileChooser.getSelectedFile();
+        	String name = selectedFile.getName();
+        	String ext = getExtension(name);
+        	if(ext=="maze" || ext=="txt") {
+        		
+        	} else {
+        		selectedFile = null;
+        		JOptionPane.showMessageDialog(null, "Selected file type not supported.");
+        	}
+        }
+	}
+	
+	public String getExtension(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        int extensionPos = filename.lastIndexOf(".");
+        int lastUnixPos = filename.lastIndexOf("\'/\'");
+        int lastWindowsPos = filename.lastIndexOf("\'\\\'");
+        int lastSeparator = Math.max(lastUnixPos, lastWindowsPos);
+        int index = lastSeparator > extensionPos ? -1 : extensionPos;
+        if (index == -1) {
+            return "";
+        } else {
+            return filename.substring(index + 1);
+        }
+    }
 }

@@ -32,8 +32,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
@@ -285,6 +288,7 @@ public class GUI extends JFrame {
 				        it.remove();
 				    }
 					
+				    grid_labels = null;
 					grid_labels = new HashMap<String,JLabel>();
 					if(size.width<=size.height) {
 						addGrid(grid_holder,size.width-20);
@@ -314,6 +318,21 @@ public class GUI extends JFrame {
 		simulation_options.add(play);
 		JButton next = new JButton("Next Step");
 		simulation_options.add(next);
+		JSlider speed = new JSlider(1, 10, 1);
+		speed.setMinorTickSpacing(1);
+		speed.setMajorTickSpacing(5);
+		speed.setPaintTicks(true);
+		speed.setSnapToTicks(true);
+		speed.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider temp = (JSlider) e.getSource();
+				int value = temp.getValue();
+				System.out.println(value);
+			}
+			
+		});
+		simulation_options.add(speed);
+		
 		options.add(algorithm_options);
 		options.add(grid_options);
 		options.add(simulation_options);

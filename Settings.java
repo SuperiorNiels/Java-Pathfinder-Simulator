@@ -4,6 +4,7 @@ public class Settings {
 	private int maze_y = 20;
 	private Boolean diagonal = false;
 	private String algorithm = "A*";
+	private int speed = 1;
 	private Maze maze;
 	private String path = "";
 	public Settings() {
@@ -59,4 +60,16 @@ public class Settings {
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+	
+	public void createPathAlgorithm(){
+		new pathAlgorithm(maze,algorithm);
+	}	
 }
