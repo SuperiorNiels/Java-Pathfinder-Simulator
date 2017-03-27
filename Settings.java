@@ -5,6 +5,7 @@ public class Settings {
 	private Boolean diagonal = false;
 	private String algorithm = "A*";
 	private Maze maze;
+	private String path = "";
 	public Settings() {
 		setMaze(new Maze(maze_x,maze_y));
 	}
@@ -49,5 +50,13 @@ public class Settings {
 
 	public void setAlgorithm(String algorithm) {
 		this.algorithm = algorithm;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 }
