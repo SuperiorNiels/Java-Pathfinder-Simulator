@@ -15,13 +15,22 @@ public class BFS implements Algorithm {
 	}
 
 	@Override
-	public char[][] solve() {
-		char [][] path = new char[X_size][Y_size];
+	public int[] solve() {
 		int max = X_size*Y_size;
+		int[] path = new int[max];
 		int X_stop = getStopPos(maze.maze);
 		int X_start = getStartPos(maze.maze);
 		int[] visited = new int[max];
+		int[] previous = new int[max];
 		adjMatrix = createAdjMatrix(maze.maze);
+		
+		/*BFS algorithm
+		 * This will place a vertex in the queue en mark it as visited
+		 * then check its neighbourghs and place the unvisited ones in the queue.
+		 * Then take the next item from the queue(remove) and do algorithm again
+		 * This until the queue is empty
+		 * 
+		 */
 		Queue<Integer> bfsq = new LinkedList<Integer>();
 		bfsq.add(X_start);
 		while(bfsq.peek()!=null){
@@ -33,22 +42,48 @@ public class BFS implements Algorithm {
 				visited[current] = 1;
 			}
 			if(current==X_stop){
+				//previous[X_stop] = X_stop;
 				break;
 			}
 			for(int j=0;j<adjMatrix[0].length;j++){
 				
-				if(adjMatrix[j][current]==1 && j!=current){
+				if(adjMatrix[current][j]==1 && j!=current){
 					if(visited[j]==0){
 						bfsq.add(j);
+						previous[j] = current;
 						System.out.print(" "+j);
 					}
+					
 				}
 			}
+			
 		}
 		
+		/*Path array
+		 * Create path array backtracking method: from dest to source
+		 * in path you will find the number of the thile wich to go to next
+		 */
+		int j = X_stop;
+		path[0]=X_stop;
+		for(int i=1;i<previous.length;i++){
+			int next = previous[j];
+			path[i] = next;
+			j = next;
+		}
+		
+		//Debugging 
 		System.out.println();
-		for(int i=0;i<visited.length;i++){
+		for(int i=0;i<previous.length;i++){
+			System.out.print(i);
+		}System.out.println();
+		for(int i=0;i<previous.length;i++){
 			System.out.print(visited[i]);
+		}System.out.println();
+		for(int i=0;i<previous.length;i++){
+			System.out.print(previous[i]);
+		}System.out.println();
+		for(int i=0;i<previous.length;i++){
+			System.out.print(path[i]+" ");
 		}
 		System.out.println("\r\n");
 		return path;

@@ -6,15 +6,15 @@ public class A_star implements Algorithm {
 	int X_size;
 	int Y_size;
 	
-	public A_star(Maze maze, int X, int Y) {
+	public A_star(Maze maze) {
 		this.maze = maze;
-		this.X_size = X;
-		this.Y_size = Y;
+		this.X_size = maze.maze[0].length;
+		this.Y_size = maze.maze[1].length;
 	}
 
 	@Override
-	public char[][] solve() {
-		char [][] path = new char[X_size][Y_size];
+	public int[] solve() {
+		int [] path = new int [X_size*Y_size];
 		
 		
 		return path;

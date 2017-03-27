@@ -2,7 +2,7 @@ package application;
 
 
 public interface Algorithm {
-	public char[][] solve();
+	public int[] solve();
 
 	default int[] toArray(int[][] matrix) {
 		int[] res = new int[matrix[0].length*matrix[1].length];

@@ -14,9 +14,9 @@ public class pathAlgorithm {
 		}
 	}
 	
-	public void solve(){
-		a.solve();
-		a.printMaze();
+	public int[] solve(){
+		return  a.solve();
+		//a.printMaze();
 	}
 	
 
