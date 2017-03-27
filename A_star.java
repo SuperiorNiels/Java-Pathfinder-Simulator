@@ -1,3 +1,5 @@
+package application;
+
 
 public class A_star implements Algorithm {
 	Maze maze;
@@ -16,6 +18,12 @@ public class A_star implements Algorithm {
 		
 		
 		return path;
+	}
+
+	@Override
+	public void printMaze() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

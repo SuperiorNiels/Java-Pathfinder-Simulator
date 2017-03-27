@@ -1,3 +1,5 @@
+package application;
+
 
 public class Settings {
 	private int maze_x = 20;
@@ -6,6 +8,7 @@ public class Settings {
 	private String algorithm = "A*";
 	private Maze maze;
 	private String path = "";
+	private pathAlgorithm p;
 	public Settings() {
 		setMaze(new Maze(maze_x,maze_y));
 	}
@@ -58,5 +61,13 @@ public class Settings {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+	
+	public void createPathAlgorithm(){
+		p = new pathAlgorithm(maze,algorithm);
+	}
+	
+	public void solve(){
+		p.solve();
 	}
 }

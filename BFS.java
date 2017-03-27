@@ -1,3 +1,5 @@
+package application;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -6,52 +8,21 @@ public class BFS implements Algorithm {
 	int X_size;
 	int Y_size;
 	int[][] adjMatrix;
-	public BFS(Maze maze, int X, int Y) {
+	public BFS(Maze maze) {
 		this.maze = maze;
-		this.X_size = X;
-		this.Y_size = Y;
+		this.X_size = maze.maze[0].length;
+		this.Y_size = maze.maze[1].length;
 	}
 
 	@Override
 	public char[][] solve() {
 		char [][] path = new char[X_size][Y_size];
 		int max = X_size*Y_size;
-		int X_stop = 0;
-		int X_start = 0;
+		int X_stop = getStopPos(maze.maze);
+		int X_start = getStartPos(maze.maze);
 		int[] visited = new int[max];
-		int[] mazeArray = toArray(maze.maze);
-		for(int i=0;i<mazeArray.length;i++){
-			if(mazeArray[i]==2){X_start = i;}
-			if(mazeArray[i]==3){X_stop = i;}
-		}
-		adjMatrix = new int[max][max];
+		adjMatrix = createAdjMatrix(maze.maze);
 		Queue<Integer> bfsq = new LinkedList<Integer>();
-		
-		//De for lus hieronder maakt de adj matrix
-		for(int i=0;i<mazeArray.length;i++) {			
-			if(i<max-X_size){
-				if(mazeArray[i+X_size]==0 || mazeArray[i+X_size]==2 || mazeArray[i+X_size]==3){
-					adjMatrix[i][i+X_size]=1;
-				}
-			}
-			if(i>=X_size){
-				if(mazeArray[i-X_size]==0 || mazeArray[i-X_size]==2 || mazeArray[i-X_size]==3){
-					adjMatrix[i][i-X_size]=1;
-				}	
-			}
-			if(i!=0 && (i % X_size) !=0){
-				if(mazeArray[i-1]==0 || mazeArray[i-1]==2 || mazeArray[i-1]==3){
-					adjMatrix[i][i-1]=1;
-				}
-			}
-			if(i!=(mazeArray.length-1) && (i % X_size)==0){
-				if(mazeArray[i+1]==0 || mazeArray[i+1]==2 || mazeArray[i+1]==3){
-					adjMatrix[i][i+1]=1;
-				}
-			}
-		}
-		
-		//Hieronder staat het eigenlijke algoritme om de weg te zoeken
 		bfsq.add(X_start);
 		while(bfsq.peek()!=null){
 			int current = bfsq.remove();
@@ -60,6 +31,9 @@ public class BFS implements Algorithm {
 			}
 			if(visited[current]==0){
 				visited[current] = 1;
+			}
+			if(current==X_stop){
+				break;
 			}
 			for(int j=0;j<adjMatrix[0].length;j++){
 				
@@ -76,7 +50,7 @@ public class BFS implements Algorithm {
 		for(int i=0;i<visited.length;i++){
 			System.out.print(visited[i]);
 		}
-		
+		System.out.println("\r\n");
 		return path;
 		
 	}
