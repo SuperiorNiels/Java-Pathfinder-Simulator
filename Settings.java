@@ -72,8 +72,9 @@ public class Settings {
 		this.path = path;
 	}
 	
-	public void solve(){
+	public int[] solve(){
 		road = p.solve();
+		return road;
 	}
 	public void printSettings() {
 		System.out.println(maze_x+" "+maze_y);
