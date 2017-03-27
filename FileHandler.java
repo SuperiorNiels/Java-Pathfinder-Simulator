@@ -16,8 +16,15 @@ public class FileHandler {
 	        int returnValue = fileChooser.showSaveDialog(null);
 	        if (returnValue == JFileChooser.APPROVE_OPTION) {
 	        	File selectedFile = fileChooser.getSelectedFile();
-	        	settings.setPath(selectedFile.getAbsolutePath());
-	        	writeToFile(selectedFile);
+	        	String name = selectedFile.getName();
+	        	String[] register = {"txt",".png",".jpg",".jpeg",".html",".docx",".gif",".","/"};
+	           	name = name.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
+	           	name = removeExt(name, register);
+	        	name = name + ".maze";
+	        	name = selectedFile.getAbsolutePath().replace(selectedFile.getName(), name);
+	        	File to_write = new File(name);
+	        	settings.setPath(to_write.getAbsolutePath());
+	        	writeToFile(to_write);
 	        }
 		} else {
 			String path = settings.getPath();
@@ -31,9 +38,23 @@ public class FileHandler {
         int returnValue = fileChooser.showSaveDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
         	File selectedFile = fileChooser.getSelectedFile();
-        	settings.setPath(selectedFile.getAbsolutePath());
-        	writeToFile(selectedFile);
+        	String name = selectedFile.getName();
+        	String[] register = {"txt",".png",".jpg",".jpeg",".html",".docx",".gif",".","/"};
+           	name = name.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
+           	name = removeExt(name, register);
+        	name = name + ".maze";
+        	name = selectedFile.getAbsolutePath().replace(selectedFile.getName(), name);
+        	File to_write = new File(name);
+        	settings.setPath(to_write.getAbsolutePath());
+        	writeToFile(to_write);
         }
+	}
+	
+	public String removeExt(String string, String[] register) {
+		for(String ext : register) {
+			string = string.replace(ext, "");
+		}
+		return string;
 	}
 	
 	public void open() {
