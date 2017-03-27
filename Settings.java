@@ -1,14 +1,17 @@
-package application;
-
 
 public class Settings {
 	private int maze_x = 20;
 	private int maze_y = 20;
 	private Boolean diagonal = false;
 	private String algorithm = "A*";
+	private int speed = 1;
 	private Maze maze;
+<<<<<<< HEAD
 	private int[] path;
 	private pathAlgorithm p;
+=======
+	private String path = "";
+>>>>>>> origin/master
 	public Settings() {
 		setMaze(new Maze(maze_x,maze_y));
 	}
@@ -55,11 +58,24 @@ public class Settings {
 		this.algorithm = algorithm;
 	}
 	
-	public void createPathAlgorithm(){
-		p = new pathAlgorithm(maze,algorithm);
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 	
+<<<<<<< HEAD
 	public void solve(){
 		path = p.solve();
+=======
+	public void printSettings() {
+		System.out.println(maze_x+" "+maze_y);
+		System.out.println(algorithm);
+		System.out.println(diagonal);
+		System.out.println(speed);
+		System.out.println(path+"\n");
+>>>>>>> origin/master
 	}
 }

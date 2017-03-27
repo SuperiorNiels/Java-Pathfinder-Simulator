@@ -1,5 +1,3 @@
-package application;
-
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -15,8 +13,8 @@ public class Main {
 	    catch (ClassNotFoundException e) {}
 	    catch (InstantiationException e) {}
 	    catch (IllegalAccessException e) {}
-		
-		new GUI("Pathfinder Simulator");
+
+		new GUI("Pathfinder Simulator", new Settings());
 
 	}
 
