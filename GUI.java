@@ -12,7 +12,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -41,6 +39,7 @@ import javax.swing.border.Border;
 public class GUI extends JFrame {
 	private String title;
 	private Settings settings = new Settings();
+	private FileHandler fileHandler = new FileHandler(settings);
 	HashMap<String, JLabel> grid_labels = new HashMap<String,JLabel>();
 	JPanel grid_holder;
 	public GUI(String title) {
@@ -68,12 +67,17 @@ public class GUI extends JFrame {
 		};
 		ActionListener openAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser();
-		        int returnValue = fileChooser.showOpenDialog(null);
-		        if (returnValue == JFileChooser.APPROVE_OPTION) {
-		          File selectedFile = fileChooser.getSelectedFile();
-		          System.out.println(selectedFile.getName());
-		        }
+				fileHandler.open();
+			}
+		};
+		ActionListener saveAction = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fileHandler.save();
+			}
+		};
+		ActionListener saveAsAction = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fileHandler.saveAs();
 			}
 		};
 		ActionListener quitAction = new ActionListener() {
@@ -137,8 +141,12 @@ public class GUI extends JFrame {
 		JMenuItem open = new JMenuItem("Open");
 		open.addActionListener(openAction);
 		file.add(open);
-		file.add(new JMenuItem("Save"));
-		file.add(new JMenuItem("Save as..."));
+		JMenuItem save = new JMenuItem("Save");
+		save.addActionListener(saveAction);
+		file.add(save);
+		JMenuItem save_as = new JMenuItem("Save as...");
+		save_as.addActionListener(saveAsAction);
+		file.add(save_as);
 		file.add(new JSeparator());
 		// Quit button + action 
 		JMenuItem quit = new JMenuItem("Quit");
