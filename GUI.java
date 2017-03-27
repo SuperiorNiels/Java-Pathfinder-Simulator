@@ -491,28 +491,27 @@ public class GUI extends JFrame {
 				}
 			}
 		}
-	};
-	
-	public void repaintMatrix() {
-		Maze maze = settings.getMaze();
-		int[][] matrix = maze.getMatrix();
-		int maze_x = settings.getMaze_x();
-		int maze_y = settings.getMaze_y();
-		for(int i=0;i<maze_x;i++) {
-			for(int j=0;j<maze_y;j++) {
-				JLabel temp = grid_labels.get(i+" "+j);
-				if(matrix[i][j]==1) {
-					temp.setBackground(Color.BLACK);
-				} else if(matrix[i][j]==2) {
-					temp.setBackground(Color.GREEN);
-				} else if(matrix[i][j]==3) {
-					temp.setBackground(Color.RED);
-				} else {
-					temp.setBackground(Color.WHITE);
+		public void repaintMatrix() {
+			Maze maze = settings.getMaze();
+			int[][] matrix = maze.getMatrix();
+			int maze_x = settings.getMaze_x();
+			int maze_y = settings.getMaze_y();
+			for(int i=0;i<maze_x;i++) {
+				for(int j=0;j<maze_y;j++) {
+					JLabel temp = grid_labels.get(i+" "+j);
+					if(matrix[i][j]==1) {
+						temp.setBackground(Color.BLACK);
+					} else if(matrix[i][j]==2) {
+						temp.setBackground(Color.GREEN);
+					} else if(matrix[i][j]==3) {
+						temp.setBackground(Color.RED);
+					} else {
+						temp.setBackground(Color.WHITE);
+					}
 				}
 			}
 		}
-	}
+	};
 	
 	
 	/*
