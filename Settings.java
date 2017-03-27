@@ -6,12 +6,10 @@ public class Settings {
 	private String algorithm = "A*";
 	private int speed = 1;
 	private Maze maze;
-<<<<<<< HEAD
-	private int[] path;
+	private int[] road;
+	private String path;
 	private pathAlgorithm p;
-=======
-	private String path = "";
->>>>>>> origin/master
+
 	public Settings() {
 		setMaze(new Maze(maze_x,maze_y));
 	}
@@ -66,16 +64,23 @@ public class Settings {
 		this.speed = speed;
 	}
 	
-<<<<<<< HEAD
+	public String getPath(){
+		return path;
+	}
+	
+	public void setPath(String path){
+		this.path = path;
+	}
+	
 	public void solve(){
-		path = p.solve();
-=======
+		road = p.solve();
+	}
 	public void printSettings() {
 		System.out.println(maze_x+" "+maze_y);
 		System.out.println(algorithm);
 		System.out.println(diagonal);
 		System.out.println(speed);
 		System.out.println(path+"\n");
->>>>>>> origin/master
+
 	}
 }
