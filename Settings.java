@@ -69,7 +69,11 @@ public class Settings {
 		this.speed = speed;
 	}
 	
-	public void createPathAlgorithm(){
-		new pathAlgorithm(maze,algorithm);
-	}	
+	public void printSettings() {
+		System.out.println(maze_x+" "+maze_y);
+		System.out.println(algorithm);
+		System.out.println(diagonal);
+		System.out.println(speed);
+		System.out.println(path+"\n");
+	}
 }

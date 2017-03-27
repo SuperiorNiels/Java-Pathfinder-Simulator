@@ -41,12 +41,14 @@ import javax.swing.event.ChangeListener;
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
 	private String title;
-	private Settings settings = new Settings();
-	private FileHandler fileHandler = new FileHandler(settings);
+	private FileHandler fileHandler;
+	private Settings settings;
 	HashMap<String, JLabel> grid_labels = new HashMap<String,JLabel>();
 	JPanel grid_holder;
-	public GUI(String title) {
+	public GUI(String title, Settings settings) {
 		this.title = title;
+		this.settings = settings;
+		fileHandler = new FileHandler(settings);
 		createGUI(settings);
 	}
 	
@@ -65,12 +67,16 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 				dispose();
-				new GUI("Pathfinder Simulator");
+				new GUI("Pathfinder Simulator", new Settings());
 			}
 		};
 		ActionListener openAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fileHandler.open();
+				if(!fileHandler.open()) {
+					setVisible(false);
+					dispose();
+					new GUI("Pathfinder Simulator", fileHandler.getSettings());
+				}
 			}
 		};
 		ActionListener saveAction = new ActionListener() {
@@ -167,6 +173,13 @@ public class GUI extends JFrame {
 		JMenuItem setAllWhite = new JMenuItem("No obstacle");
 		setAllWhite.addActionListener(setNoObstacle);
 		settings_tab.add(setAllWhite);
+		JMenuItem printSettings = new JMenuItem("Print Settings");
+		printSettings.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				settings.printSettings();
+			}
+		});
+		settings_tab.add(printSettings);
 		menu.add(file);
 		menu.add(settings_tab);
 		setJMenuBar(menu);		
@@ -207,23 +220,27 @@ public class GUI extends JFrame {
 		algorithm_options.setBorder(algorithm_options_title);
 		ButtonGroup algorithm = new ButtonGroup();
 		JRadioButton a_star = new JRadioButton("A*");
-		a_star.setSelected(true);
+		if(settings.getAlgorithm().equals("A*")) {a_star.setSelected(true);}
 		a_star.addActionListener(changeAlgorithm);
 		algorithm.add(a_star);
 		algorithm_buttons.add(a_star);
 		JRadioButton dijkstra = new JRadioButton("Dijkstra");
+		if(settings.getAlgorithm().equals("Dijkstra")) {dijkstra.setSelected(true);}
 		algorithm.add(dijkstra);
 		dijkstra.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(dijkstra);
 		JRadioButton bfs = new JRadioButton("Breadth-first search");
+		if(settings.getAlgorithm().equals("Breadth-first search")) {bfs.setSelected(true);}
 		algorithm.add(bfs);
 		bfs.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(bfs);
 		JRadioButton dfs = new JRadioButton("Depth-first search");
+		if(settings.getAlgorithm().equals("Depth-first search")) {dfs.setSelected(true);}
 		algorithm.add(dfs);
 		dfs.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(dfs);
 		JRadioButton Bfs = new JRadioButton("Best-first search");
+		if(settings.getAlgorithm().equals("Best-first search")) {Bfs.setSelected(true);}
 		algorithm.add(Bfs);
 		Bfs.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(Bfs);
@@ -305,6 +322,7 @@ public class GUI extends JFrame {
 		wrapper.add(grid_size,BorderLayout.WEST);
 		JCheckBox diagonal_movement = new JCheckBox("Diagonal movement");
 		diagonal_movement.addActionListener(diagonal);
+		diagonal_movement.setSelected(settings.getDiagonal());
 		wrapper.add(diagonal_movement,BorderLayout.SOUTH);
 		grid_options.add(wrapper);
 		
@@ -326,8 +344,7 @@ public class GUI extends JFrame {
 		speed.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSlider temp = (JSlider) e.getSource();
-				int value = temp.getValue();
-				System.out.println(value);
+				settings.setSpeed(temp.getValue());
 			}
 			
 		});
@@ -358,6 +375,7 @@ public class GUI extends JFrame {
 	int y_new = 0;
 	Color startColor;
 	Boolean mouseDown = false;
+	Boolean rightClick = false;
 	Boolean movingPoint = false;
 	MouseListener addObstacle = new MouseListener() {
 		public void mouseClicked(MouseEvent e) {}
@@ -374,6 +392,10 @@ public class GUI extends JFrame {
 				} else {
 					toggleObstacle(e);
 				}
+			} else {
+				mouseDown = true;
+				rightClick = true;
+				toggleObstacle(e);
 			}
 		}
 		public void mouseEntered(MouseEvent e) {
@@ -386,8 +408,9 @@ public class GUI extends JFrame {
 			}
 		}
 		public void mouseReleased(MouseEvent e) {
+			mouseDown = false;
+			rightClick = false;
 			if(e.getButton()==MouseEvent.BUTTON1) {
-				mouseDown = false;				
 				if(movingPoint) {
 					changePoint(e);
 					movingPoint = false;
@@ -459,38 +482,37 @@ public class GUI extends JFrame {
 			int x = Integer.parseInt(name.substring(0,2));
 			int y = Integer.parseInt(name.substring(4,6));
 			if(matrix[x][y]!=2 && matrix[x][y]!=3) {
-				if(startColor==Color.WHITE) {
-					if(matrix[x][y]==0) {
-						maze.addObstacle(x,y);
-						e.getComponent().setBackground(Color.BLACK);
-					}
+				if(!rightClick) {
+					maze.addObstacle(x,y);
+					e.getComponent().setBackground(Color.BLACK);
 				} else {
 					maze.removeObstacle(x,y);
 					e.getComponent().setBackground(Color.WHITE);
 				}
 			}
 		}
-		public void repaintMatrix() {
-			Maze maze = settings.getMaze();
-			int[][] matrix = maze.getMatrix();
-			int maze_x = settings.getMaze_x();
-			int maze_y = settings.getMaze_y();
-			for(int i=0;i<maze_x;i++) {
-				for(int j=0;j<maze_y;j++) {
-					JLabel temp = grid_labels.get(i+" "+j);
-					if(matrix[i][j]==1) {
-						temp.setBackground(Color.BLACK);
-					} else if(matrix[i][j]==2) {
-						temp.setBackground(Color.GREEN);
-					} else if(matrix[i][j]==3) {
-						temp.setBackground(Color.RED);
-					} else {
-						temp.setBackground(Color.WHITE);
-					}
+	};
+	
+	public void repaintMatrix() {
+		Maze maze = settings.getMaze();
+		int[][] matrix = maze.getMatrix();
+		int maze_x = settings.getMaze_x();
+		int maze_y = settings.getMaze_y();
+		for(int i=0;i<maze_x;i++) {
+			for(int j=0;j<maze_y;j++) {
+				JLabel temp = grid_labels.get(i+" "+j);
+				if(matrix[i][j]==1) {
+					temp.setBackground(Color.BLACK);
+				} else if(matrix[i][j]==2) {
+					temp.setBackground(Color.GREEN);
+				} else if(matrix[i][j]==3) {
+					temp.setBackground(Color.RED);
+				} else {
+					temp.setBackground(Color.WHITE);
 				}
 			}
 		}
-	};
+	}
 	
 	
 	/*
