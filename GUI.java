@@ -43,6 +43,8 @@ public class GUI extends JFrame {
 	private String title;
 	private FileHandler fileHandler;
 	private Settings settings;
+	private pathAlgorithm a;
+	private int[][] path;
 	HashMap<String, JLabel> grid_labels = new HashMap<String,JLabel>();
 	JPanel grid_holder;
 	public GUI(String title, Settings settings) {
@@ -197,6 +199,8 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				AbstractButton button = (AbstractButton) e.getSource();
 				settings.setAlgorithm(button.getText());
+				a = new pathAlgorithm(settings.getMaze(),settings.getAlgorithm());
+				path = a.solve();
 			}
 		};
 		

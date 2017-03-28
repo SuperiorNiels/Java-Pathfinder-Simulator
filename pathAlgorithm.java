@@ -1,5 +1,3 @@
-package application;
-
 
 public class pathAlgorithm {
 	char[][] path;
@@ -14,10 +12,7 @@ public class pathAlgorithm {
 		}
 	}
 	
-	public int[] solve(){
+	public int[][] solve(){
 		return  a.solve();
-		//a.printMaze();
 	}
-	
-
 }
