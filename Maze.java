@@ -34,12 +34,24 @@ public class Maze {
 	}
 	
 	public void moveStartPoint(int X_old, int Y_old, int X_new, int Y_new) {
-		maze[X_old][Y_old] = 0;
+		if(maze[X_old][Y_old]==1) {
+			maze[X_old][Y_old] = 1;
+		} else if(maze[X_old][Y_old]==3) {
+			maze[X_old][Y_old] = 3;
+		} else {
+			maze[X_old][Y_old] = 0;
+		}
 		maze[X_new][Y_new] = 2;
 	}
 	
 	public void moveStopPoint(int X_old, int Y_old, int X_new, int Y_new) {
-		maze[X_old][Y_old] = 0;
+		if(maze[X_old][Y_old]==1) {
+			maze[X_old][Y_old] = 1;
+		} else if(maze[X_old][Y_old]==2) {
+			maze[X_old][Y_old] = 2;
+		} else {
+			maze[X_old][Y_old] = 0;
+		}
 		maze[X_new][Y_new] = 3;
 	}
 	

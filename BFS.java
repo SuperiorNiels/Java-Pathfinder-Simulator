@@ -14,7 +14,7 @@ public class BFS implements Algorithm {
 	}
 
 	@Override
-	public int[][] solve() {
+	public int[][] solve(Boolean diagonal) {
 		int max = X_size*Y_size;
 		int[] pathArray = new int[max];
 		/*Path array initialization
@@ -27,7 +27,7 @@ public class BFS implements Algorithm {
 		int X_start = getStartPos(maze.maze);
 		int[] visited = new int[max];
 		int[] previous = new int[max];
-		adjMatrix = createAdjMatrix(maze.maze);
+		adjMatrix = createAdjMatrix(maze.maze,diagonal);
 		
 		/*BFS algorithm
 		 * This will place a vertex in the queue and mark it as visited
@@ -47,7 +47,6 @@ public class BFS implements Algorithm {
 				visited[current] = 1;
 			}
 			if(current==X_stop){
-				//previous[X_stop] = X_stop;
 				break;
 			}
 			for(int j=0;j<adjMatrix[0].length;j++){
@@ -56,12 +55,10 @@ public class BFS implements Algorithm {
 					if(visited[j]==0){
 						bfsq.add(j);
 						previous[j] = current;
-						System.out.print(" "+j);
 					}
 					
 				}
 			}
-			
 		}
 		
 		/*Path array
@@ -79,7 +76,7 @@ public class BFS implements Algorithm {
 			}
 			j = next;
 		}
-		int [][] path = toMatrix(pathArray);
+		int [][] path = toMatrix(pathArray,5);
 		
 		
 		//Debugging 
@@ -117,7 +114,6 @@ public class BFS implements Algorithm {
 			System.out.print("\n");
 		}
 		System.out.print("\n");
-	}
-
+	}		
 }
  

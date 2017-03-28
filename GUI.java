@@ -207,6 +207,25 @@ public class GUI extends JFrame {
 				settings.setDiagonal(selected);
 			}
 		};
+		
+		ActionListener solveAction = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				repaintMatrix();
+				settings.updatePathfinder();
+				int[][] solution = settings.getPathFinder().solve();
+				int[][] maze = settings.getMaze().getMatrix();
+				int maze_x = settings.getMaze_x();
+				int maze_y = settings.getMaze_y();
+				for (int i=0;i<maze_x;i++) {
+					for (int j=0;j<maze_y;j++) {
+						JLabel temp = grid_labels.get(i+" "+j);
+						if(maze[i][j]==0 && solution[i][j]==5) {
+							temp.setBackground(Color.YELLOW);
+						}
+					}
+				}
+			}
+		};
 				
 		/*
 		 * Create Option Panel
@@ -332,7 +351,7 @@ public class GUI extends JFrame {
 		simulation_options.setBorder(simulation_options_title);
 		JButton stop = new JButton("Stop");
 		simulation_options.add(stop);
-		JButton play = new JButton("Simulate");
+		JButton play = new JButton("Start");
 		simulation_options.add(play);
 		JButton next = new JButton("Next Step");
 		simulation_options.add(next);
@@ -346,10 +365,11 @@ public class GUI extends JFrame {
 				JSlider temp = (JSlider) e.getSource();
 				settings.setSpeed(temp.getValue());
 			}
-			
 		});
 		simulation_options.add(speed);
-		
+		JButton solve = new JButton("Solve");
+		solve.addActionListener(solveAction);
+		simulation_options.add(solve);
 		options.add(algorithm_options);
 		options.add(grid_options);
 		options.add(simulation_options);
@@ -491,27 +511,28 @@ public class GUI extends JFrame {
 				}
 			}
 		}
-		public void repaintMatrix() {
-			Maze maze = settings.getMaze();
-			int[][] matrix = maze.getMatrix();
-			int maze_x = settings.getMaze_x();
-			int maze_y = settings.getMaze_y();
-			for(int i=0;i<maze_x;i++) {
-				for(int j=0;j<maze_y;j++) {
-					JLabel temp = grid_labels.get(i+" "+j);
-					if(matrix[i][j]==1) {
-						temp.setBackground(Color.BLACK);
-					} else if(matrix[i][j]==2) {
-						temp.setBackground(Color.GREEN);
-					} else if(matrix[i][j]==3) {
-						temp.setBackground(Color.RED);
-					} else {
-						temp.setBackground(Color.WHITE);
-					}
+	};
+	
+	public void repaintMatrix() {
+		Maze maze = settings.getMaze();
+		int[][] matrix = maze.getMatrix();
+		int maze_x = settings.getMaze_x();
+		int maze_y = settings.getMaze_y();
+		for(int i=0;i<maze_x;i++) {
+			for(int j=0;j<maze_y;j++) {
+				JLabel temp = grid_labels.get(i+" "+j);
+				if(matrix[i][j]==1) {
+					temp.setBackground(Color.BLACK);
+				} else if(matrix[i][j]==2) {
+					temp.setBackground(Color.GREEN);
+				} else if(matrix[i][j]==3) {
+					temp.setBackground(Color.RED);
+				} else {
+					temp.setBackground(Color.WHITE);
 				}
 			}
 		}
-	};
+	}
 	
 	
 	/*

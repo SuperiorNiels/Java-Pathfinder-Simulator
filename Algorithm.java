@@ -1,6 +1,7 @@
+import java.util.Queue;
 
 public interface Algorithm {
-	public int[][] solve();
+	public int[][] solve(Boolean diagonal);
 
 	default int[] toArray(int[][] matrix) {
 		int[] res = new int[matrix[0].length*matrix[1].length];
@@ -14,7 +15,7 @@ public interface Algorithm {
 		return res;
 	}
 	
-	default int[][] createAdjMatrix(int[][] matrix){
+	default int[][] createAdjMatrix(int[][] matrix, Boolean diagonal){
 		int [] mazeArray = toArray(matrix);
 		int max = mazeArray.length;
 		int X_size = (int) Math.sqrt(max);
@@ -29,7 +30,7 @@ public interface Algorithm {
 			if(i>=X_size){
 				if(mazeArray[i-X_size]==0 || mazeArray[i-X_size]==2 || mazeArray[i-X_size]==3){
 					adjMatrix[i][i-X_size]=1;
-				}	
+				}
 			}
 			if(i!=0 && k !=0){
 				if(mazeArray[i-1]==0 || mazeArray[i-1]==2 || mazeArray[i-1]==3){
@@ -41,6 +42,28 @@ public interface Algorithm {
 					adjMatrix[i][i+1]=1;
 				}
 			}
+			if(diagonal==true){
+				if(k!=(X_size-1) && i<max-X_size){
+					if(mazeArray[i+X_size+1]==0 || mazeArray[i+X_size+1]==2 || mazeArray[i+X_size+1]==3){
+						adjMatrix[i][i+X_size+1]=1;
+					}
+				}
+				if(k!=0 && i<max-X_size){
+					if(mazeArray[i+X_size-1]==0 || mazeArray[i+X_size-1]==2 || mazeArray[i+X_size-1]==3){
+						adjMatrix[i][i+X_size-1]=1;
+					}
+				}
+				if(k!=(X_size-1) && i>=X_size){
+					if(mazeArray[i-X_size+1]==0 || mazeArray[i-X_size+1]==2 || mazeArray[i-X_size+1]==3){
+						adjMatrix[i][i-X_size+1]=1;
+					}
+				}
+				if(k!=0 && i>=X_size){
+					if(mazeArray[i-X_size-1]==0 || mazeArray[i-X_size-1]==2 || mazeArray[i-X_size-1]==3){
+						adjMatrix[i][i-X_size-1]=1;
+					}
+				}
+			}
 			k++;
 			if(k>=X_size){
 				k=0;
@@ -49,7 +72,7 @@ public interface Algorithm {
 		return adjMatrix;
 	}
 	
-	default int[][] toMatrix(int[] array){
+	default int[][] toMatrix(int[] array,int type){
 		int max = (int) Math.sqrt(array.length);
 		int[][] matrix = new int[max][max];
 		for(int x=0;x<array.length;x++){
@@ -61,7 +84,7 @@ public interface Algorithm {
 						return matrix;
 					}
 					if(count == k){
-						matrix[i][j]=5;
+						matrix[i][j]=type;
 					}
 				count++;
 				}

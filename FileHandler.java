@@ -18,7 +18,8 @@ public class FileHandler {
 	 * Saving + extra functions
 	 */
 	public void save() {
-		if(settings.getPath().equals("")) {
+		String path = settings.getPath();
+		if(path.isEmpty()) {
 			JFileChooser fileChooser = new JFileChooser();
 	        int returnValue = fileChooser.showSaveDialog(null);
 	        if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -36,7 +37,6 @@ public class FileHandler {
 	        	to_write = null;
 	        }
 		} else {
-			String path = settings.getPath();
 			File selectedFile = new File(path);
 			writeToFile(selectedFile);
 		} 
@@ -102,7 +102,7 @@ public class FileHandler {
 		}
 		writer.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			this.saveAs();
 		}
 	}
 	

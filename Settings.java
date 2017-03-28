@@ -3,14 +3,14 @@ public class Settings {
 	private int maze_x = 20;
 	private int maze_y = 20;
 	private Boolean diagonal = false;
-	private String algorithm = "A*";
+	private String algorithm;
 	private int speed = 1;
 	private Maze maze;
-	private String path;
-	private pathAlgorithm p;
-
+	private String path = "";
+	private PathAlgorithm p;
 	public Settings() {
 		setMaze(new Maze(maze_x,maze_y));
+		setAlgorithm("A*");
 	}
 	
 	public int getMaze_x() {
@@ -53,6 +53,14 @@ public class Settings {
 
 	public void setAlgorithm(String algorithm) {
 		this.algorithm = algorithm;
+	}
+	
+	public PathAlgorithm getPathFinder() {
+		return p;
+	}
+	
+	public void updatePathfinder() {
+		p = new PathAlgorithm(this);
 	}
 	
 	public int getSpeed() {
