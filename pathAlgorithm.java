@@ -1,10 +1,9 @@
 
-public class pathAlgorithm {
-	char[][] path;
+public class PathAlgorithm {
 	Maze maze;
 	String algorithm;
 	Algorithm a;
-	public pathAlgorithm(Maze maze, String algorithm) {
+	public PathAlgorithm(Maze maze, String algorithm) {
 		this.maze = maze;
 		this.algorithm = algorithm;
 		switch(algorithm){
@@ -12,7 +11,7 @@ public class pathAlgorithm {
 		}
 	}
 	
-	public int[][] solve(){
+	public int[][] solve() {
 		return  a.solve();
 	}
 }
