@@ -69,10 +69,18 @@ public class FileHandler {
 	}
 	
 	public void writeToFile(File selectedFile) {
-		if(!selectedFile.exists() && !selectedFile.isDirectory()) { 
-	    	//Show Popup
+		if(!selectedFile.exists() && !selectedFile.isDirectory()) {
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			int dialogResult = JOptionPane.showConfirmDialog (null, "File does not exists, do you want to create it?","Warning",dialogButton);
+			if(dialogResult == JOptionPane.NO_OPTION) {
+				return;
+			}
 		} else {
-			//overwrite file
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			int dialogResult = JOptionPane.showConfirmDialog (null, "File already exists, do you want to overwrite it?","Warning",dialogButton);
+			if(dialogResult == JOptionPane.NO_OPTION) {
+				return;
+			}
 		}
 		
 		//Get all settings from Settings
@@ -204,4 +212,16 @@ public class FileHandler {
             return filename.substring(index + 1);
         }
     }
+	
+	public String getFileName() {
+		String name = settings.getPath();
+		int i=name.length()-1; Boolean found = false;
+		while(i>0 && !found) {
+			if(name.charAt(i)=='\\') {
+				found =true;
+			}
+			i--;
+		}
+		return name = name.substring(i+2, name.length());
+	}
 }
