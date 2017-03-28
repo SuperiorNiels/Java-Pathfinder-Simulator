@@ -72,6 +72,10 @@ public class Settings {
 		this.path = path;
 	}
 	
+	public void setPathAlgorithm(){
+		p = new pathAlgorithm(maze,algorithm);
+	}
+	
 	public int[] solve(){
 		road = p.solve();
 		return road;
