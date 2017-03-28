@@ -57,6 +57,9 @@ public interface Algorithm {
 			int count = 0;
 			for(int i=0;i<max;i++){
 				for(int j=0;j<max;j++){
+					if(k==-1){
+						return matrix;
+					}
 					if(count == k){
 						matrix[i][j]=5;
 					}
