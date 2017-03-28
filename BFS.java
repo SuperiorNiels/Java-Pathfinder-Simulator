@@ -1,4 +1,3 @@
-package application;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -15,9 +14,9 @@ public class BFS implements Algorithm {
 	}
 
 	@Override
-	public int[] solve() {
+	public int[][] solve() {
 		int max = X_size*Y_size;
-		int[] path = new int[max];
+		int[] pathArray = new int[max];
 		int X_stop = getStopPos(maze.maze);
 		int X_start = getStartPos(maze.maze);
 		int[] visited = new int[max];
@@ -64,12 +63,14 @@ public class BFS implements Algorithm {
 		 * in path you will find the number of the thile wich to go to next
 		 */
 		int j = X_stop;
-		path[0]=X_stop;
+		pathArray[0]=X_stop;
 		for(int i=1;i<previous.length;i++){
 			int next = previous[j];
-			path[i] = next;
+			pathArray[i] = next;
 			j = next;
 		}
+		int [][] path = toMatrix(pathArray);
+		
 		
 		//Debugging 
 		System.out.println();
@@ -83,9 +84,15 @@ public class BFS implements Algorithm {
 			System.out.print(previous[i]);
 		}System.out.println();
 		for(int i=0;i<previous.length;i++){
-			System.out.print(path[i]+" ");
+			System.out.print(pathArray[i]+" ");
 		}
 		System.out.println("\r\n");
+		for(int i=0;i<X_size;i++) {
+			for(int k=0;k<X_size;k++) {
+				System.out.print(path[i][k]);
+			}
+			System.out.print("\n");
+		}
 		return path;
 		
 	}

@@ -6,7 +6,6 @@ public class Settings {
 	private String algorithm = "A*";
 	private int speed = 1;
 	private Maze maze;
-	private int[] road;
 	private String path;
 	private pathAlgorithm p;
 
@@ -72,14 +71,6 @@ public class Settings {
 		this.path = path;
 	}
 	
-	public void setPathAlgorithm(){
-		p = new pathAlgorithm(maze,algorithm);
-	}
-	
-	public int[] solve(){
-		road = p.solve();
-		return road;
-	}
 	public void printSettings() {
 		System.out.println(maze_x+" "+maze_y);
 		System.out.println(algorithm);
