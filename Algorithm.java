@@ -1,8 +1,6 @@
-package application;
-
 
 public interface Algorithm {
-	public int[] solve();
+	public int[][] solve();
 
 	default int[] toArray(int[][] matrix) {
 		int[] res = new int[matrix[0].length*matrix[1].length];
@@ -49,6 +47,27 @@ public interface Algorithm {
 			}
 		}
 		return adjMatrix;
+	}
+	
+	default int[][] toMatrix(int[] array){
+		int max = (int) Math.sqrt(array.length);
+		int[][] matrix = new int[max][max];
+		for(int x=0;x<array.length;x++){
+			int k = array[x];
+			int count = 0;
+			for(int i=0;i<max;i++){
+				for(int j=0;j<max;j++){
+					if(k==-1){
+						return matrix;
+					}
+					if(count == k){
+						matrix[i][j]=5;
+					}
+				count++;
+				}
+			}
+		}
+		return matrix;
 	}
 	
 	default int getStartPos(int[][] matrix) {
