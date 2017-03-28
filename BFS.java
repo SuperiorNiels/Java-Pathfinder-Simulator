@@ -70,6 +70,8 @@ public class BFS implements Algorithm {
 			j = next;
 		}
 		int [][] path = toMatrix(pathArray);
+		
+		
 		//Debugging 
 		System.out.println();
 		for(int i=0;i<previous.length;i++){
