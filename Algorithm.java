@@ -1,4 +1,3 @@
-import java.util.Queue;
 
 public interface Algorithm {
 	public int[][] solve(Boolean diagonal);

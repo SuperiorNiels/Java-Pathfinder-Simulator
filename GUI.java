@@ -75,18 +75,20 @@ public class GUI extends JFrame {
 				if(!fileHandler.open()) {
 					setVisible(false);
 					dispose();
-					new GUI("Pathfinder Simulator", fileHandler.getSettings());
+					new GUI("Pathfinder Simulator - "+fileHandler.getFileName(), fileHandler.getSettings());
 				}
 			}
 		};
 		ActionListener saveAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fileHandler.save();
+				setTitle("Pathfinder Simulator - "+fileHandler.getFileName());
 			}
 		};
 		ActionListener saveAsAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fileHandler.saveAs();
+				setTitle("Pathfinder Simulator - "+fileHandler.getFileName());
 			}
 		};
 		ActionListener quitAction = new ActionListener() {

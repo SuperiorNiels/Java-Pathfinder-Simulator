@@ -11,15 +11,16 @@ public class A_star implements Algorithm {
 	}
 
 	@Override
+	public int[][] solve(Boolean diagonal) {
+		int [][] path = new int [X_size*Y_size][X_size*Y_size];
+		
+		
+		return path;
+	}
+
+	@Override
 	public void printMaze() {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public int[][] solve(Boolean diagonal) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -17,6 +17,7 @@ public class BFS implements Algorithm {
 	public int[][] solve(Boolean diagonal) {
 		int max = X_size*Y_size;
 		int[] pathArray = new int[max];
+		Boolean found = false;
 		/*Path array initialization
 		 * -1 represents the end
 		 */
@@ -47,6 +48,7 @@ public class BFS implements Algorithm {
 				visited[current] = 1;
 			}
 			if(current==X_stop){
+				found = true;
 				break;
 			}
 			for(int j=0;j<adjMatrix[0].length;j++){
@@ -66,15 +68,17 @@ public class BFS implements Algorithm {
 		 * in path you will find the number of the tile which to go to next
 		 * then this array is transformed to a matrix and this matrix is returned
 		 */
-		int j = X_stop;
-		pathArray[0]=X_stop;
-		for(int i=1;i<previous.length;i++){
-			int next = previous[j];
-			pathArray[i] = next;
-			if(next==X_start){
-				break;
+		if(found){
+			int j = X_stop;
+			pathArray[0]=X_stop;
+			for(int i=1;i<previous.length;i++){
+				int next = previous[j];
+				pathArray[i] = next;
+				if(next==X_start){
+					break;
+				}
+				j = next;
 			}
-			j = next;
 		}
 		int [][] path = toMatrix(pathArray,5);
 		
