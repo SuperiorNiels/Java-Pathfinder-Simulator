@@ -1,17 +1,18 @@
 
 public class PathAlgorithm {
-	Maze maze;
-	String algorithm;
+	Settings settings;
 	Algorithm a;
-	public PathAlgorithm(Maze maze, String algorithm) {
-		this.maze = maze;
-		this.algorithm = algorithm;
-		switch(algorithm){
-		case "Breadth-first search": a = new BFS(maze);
+	public PathAlgorithm(Settings s) {
+		this.settings = s;
+		switch(settings.getAlgorithm()){
+		case "Breadth-first search": a = new BFS(settings.getMaze()); break;
+		case "Dijkstra" : a = new Dijkstra(settings.getMaze()); break;
 		}
 	}
 	
 	public int[][] solve() {
-		return  a.solve();
+		int [][] res =a.solve(settings.getDiagonal());
+		//a.printMaze();
+		return res;
 	}
 }

@@ -14,9 +14,10 @@ public class BFS implements Algorithm {
 	}
 
 	@Override
-	public int[][] solve() {
+	public int[][] solve(Boolean diagonal) {
 		int max = X_size*Y_size;
 		int[] pathArray = new int[max];
+		Boolean found = false;
 		/*Path array initialization
 		 * -1 represents the end
 		 */
@@ -27,7 +28,7 @@ public class BFS implements Algorithm {
 		int X_start = getStartPos(maze.maze);
 		int[] visited = new int[max];
 		int[] previous = new int[max];
-		adjMatrix = createAdjMatrix(maze.maze);
+		adjMatrix = createAdjMatrix(maze.maze,diagonal);
 		
 		/*BFS algorithm
 		 * This will place a vertex in the queue and mark it as visited
@@ -47,7 +48,7 @@ public class BFS implements Algorithm {
 				visited[current] = 1;
 			}
 			if(current==X_stop){
-				//previous[X_stop] = X_stop;
+				found = true;
 				break;
 			}
 			for(int j=0;j<adjMatrix[0].length;j++){
@@ -56,12 +57,10 @@ public class BFS implements Algorithm {
 					if(visited[j]==0){
 						bfsq.add(j);
 						previous[j] = current;
-						System.out.print(" "+j);
 					}
 					
 				}
 			}
-			
 		}
 		
 		/*Path array
@@ -69,17 +68,19 @@ public class BFS implements Algorithm {
 		 * in path you will find the number of the tile which to go to next
 		 * then this array is transformed to a matrix and this matrix is returned
 		 */
-		int j = X_stop;
-		pathArray[0]=X_stop;
-		for(int i=1;i<previous.length;i++){
-			int next = previous[j];
-			pathArray[i] = next;
-			if(next==X_start){
-				break;
+		if(found){
+			int j = X_stop;
+			pathArray[0]=X_stop;
+			for(int i=1;i<previous.length;i++){
+				int next = previous[j];
+				pathArray[i] = next;
+				if(next==X_start){
+					break;
+				}
+				j = next;
 			}
-			j = next;
 		}
-		int [][] path = toMatrix(pathArray);
+		int [][] path = toMatrix(pathArray,5,X_size);
 		
 		
 		//Debugging 
@@ -98,13 +99,12 @@ public class BFS implements Algorithm {
 		}
 		System.out.println("\r\n");
 		for(int i=0;i<X_size;i++) {
-			for(int k=0;k<X_size;k++) {
+			for(int k=0;k<Y_size;k++) {
 				System.out.print(path[i][k]);
 			}
 			System.out.print("\n");
 		}
 		return path;
-		
 	}
 	
 	
@@ -117,7 +117,6 @@ public class BFS implements Algorithm {
 			System.out.print("\n");
 		}
 		System.out.print("\n");
-	}
-
+	}		
 }
  
