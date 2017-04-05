@@ -3,10 +3,10 @@ public interface Algorithm {
 	public int[][] solve(Boolean diagonal);
 
 	default int[] toArray(int[][] matrix) {
-		int[] res = new int[matrix[0].length*matrix[1].length];
+		int[] res = new int[matrix[0].length*matrix.length];
 		int k=0;
-		for(int i=0;i<matrix[0].length;i++){
-			for(int j=0;j<matrix[1].length;j++){
+		for(int i=0;i<matrix.length;i++){
+			for(int j=0;j<matrix[0].length;j++){
 				res[k]=matrix[i][j];
 				k++;
 			}
