@@ -9,8 +9,8 @@ public class BFS implements Algorithm {
 	int[][] adjMatrix;
 	public BFS(Maze maze) {
 		this.maze = maze;
-		this.X_size = maze.maze[0].length;
-		this.Y_size = maze.maze[1].length;
+		this.X_size = maze.maze.length;
+		this.Y_size = maze.maze[0].length;
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class BFS implements Algorithm {
 				found = true;
 				break;
 			}
-			for(int j=0;j<adjMatrix[0].length;j++){
+			for(int j=0;j<adjMatrix.length;j++){
 				
 				if(adjMatrix[current][j]==1 && j!=current){
 					if(visited[j]==0){
@@ -80,10 +80,10 @@ public class BFS implements Algorithm {
 				j = next;
 			}
 		}
-		int [][] path = toMatrix(pathArray,5);
+		int [][] path = toMatrix(pathArray,5,X_size);
 		
 		
-		//Debugging 
+		/**Debugging 
 		System.out.println();
 		for(int i=0;i<previous.length;i++){
 			System.out.print(i);
@@ -99,13 +99,12 @@ public class BFS implements Algorithm {
 		}
 		System.out.println("\r\n");
 		for(int i=0;i<X_size;i++) {
-			for(int k=0;k<X_size;k++) {
+			for(int k=0;k<Y_size;k++) {
 				System.out.print(path[i][k]);
 			}
 			System.out.print("\n");
-		}
+		}**/
 		return path;
-		
 	}
 	
 	
@@ -118,6 +117,17 @@ public class BFS implements Algorithm {
 			System.out.print("\n");
 		}
 		System.out.print("\n");
+	}
+
+	@Override
+	public void dispose() {
+		try {
+			this.finalize();
+			maze = null;
+			adjMatrix = null;
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}	
 	}		
 }
  
