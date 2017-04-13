@@ -61,6 +61,8 @@ public class BFS implements Algorithm {
 				String temp = i+" "+j;
 				if(path.contains(temp)) {
 					final_path[i][j] = 5;
+				} else if(visited.contains(temp)){
+					final_path[i][j] = 6;
 				} else {
 					final_path[i][j] = 0;
 				}

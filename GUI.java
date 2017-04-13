@@ -164,17 +164,15 @@ public class GUI extends JFrame {
 		quit.addActionListener(quitAction);
 		file.add(quit);
 		JMenu settings_tab = new JMenu("Tools");
-		//settings_tab.add(new JMenuItem("Grid width"));
-		//settings_tab.add(new JMenuItem("Grid height"));
-		JMenuItem print = new JMenuItem("Print Matrix");
-		print.addActionListener(printMatrix);
-		settings_tab.add(print);
 		JMenuItem setAllBlack = new JMenuItem("Full obstacle");
 		setAllBlack.addActionListener(setAllObstacle);
 		settings_tab.add(setAllBlack);
 		JMenuItem setAllWhite = new JMenuItem("No obstacle");
 		setAllWhite.addActionListener(setNoObstacle);
 		settings_tab.add(setAllWhite);
+		JMenuItem print = new JMenuItem("Print Matrix");
+		print.addActionListener(printMatrix);
+		settings_tab.add(print);
 		JMenuItem printSettings = new JMenuItem("Print Settings");
 		printSettings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -232,6 +230,8 @@ public class GUI extends JFrame {
 						JLabel temp = grid_labels.get(i+" "+j);
 						if(maze[i][j]==0 && solution[i][j]==5) {
 							temp.setBackground(Color.YELLOW);
+						} else if(maze[i][j]==0 && solution[i][j]==6) {
+							temp.setBackground(Color.GRAY);
 						}
 					}
 				}

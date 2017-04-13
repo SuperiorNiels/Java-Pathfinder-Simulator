@@ -11,6 +11,9 @@ public class PathAlgorithm {
 			case "Dijkstra": 
 				a = new Dijkstra(settings);
 				break;
+			default:
+				a = new BFS(settings);
+				break;
 		}
 	}
 	

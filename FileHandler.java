@@ -222,6 +222,9 @@ public class FileHandler {
 			}
 			i--;
 		}
-		return name = name.substring(i+2, name.length());
+		try {
+			name = name.substring(i+2, name.length());
+		} catch(StringIndexOutOfBoundsException e) {}
+		return name;
 	}
 }
