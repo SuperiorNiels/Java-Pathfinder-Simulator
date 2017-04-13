@@ -3,10 +3,10 @@ public interface Algorithm {
 	public int[][] solve();
 
 	default int[] toArray(int[][] matrix) {
-		int[] res = new int[matrix[0].length*matrix[1].length];
+		int[] res = new int[matrix[0].length*matrix.length];
 		int k=0;
-		for(int i=0;i<matrix[0].length;i++){
-			for(int j=0;j<matrix[1].length;j++){
+		for(int i=0;i<matrix.length;i++){
+			for(int j=0;j<matrix[0].length;j++){
 				res[k]=matrix[i][j];
 				k++;
 			}
@@ -14,10 +14,11 @@ public interface Algorithm {
 		return res;
 	}
 	
-	default int[][] createAdjMatrix(int[][] matrix){
+	default int[][] createAdjMatrix(int[][] matrix, Boolean diagonal){
 		int [] mazeArray = toArray(matrix);
 		int max = mazeArray.length;
-		int X_size = (int) Math.sqrt(max);
+		int X_size = matrix.length;
+		//int Y_size = matrix[0].length;
 		int[][] adjMatrix = new int[max][max];
 		int k=0;
 		for(int i=0;i<mazeArray.length;i++) {			
@@ -29,7 +30,7 @@ public interface Algorithm {
 			if(i>=X_size){
 				if(mazeArray[i-X_size]==0 || mazeArray[i-X_size]==2 || mazeArray[i-X_size]==3){
 					adjMatrix[i][i-X_size]=1;
-				}	
+				}
 			}
 			if(i!=0 && k !=0){
 				if(mazeArray[i-1]==0 || mazeArray[i-1]==2 || mazeArray[i-1]==3){
@@ -41,6 +42,28 @@ public interface Algorithm {
 					adjMatrix[i][i+1]=1;
 				}
 			}
+			if(diagonal==true){
+				if(k!=(X_size-1) && i<max-X_size){
+					if(mazeArray[i+X_size+1]==0 || mazeArray[i+X_size+1]==2 || mazeArray[i+X_size+1]==3){
+						adjMatrix[i][i+X_size+1]=1;
+					}
+				}
+				if(k!=0 && i<max-X_size){
+					if(mazeArray[i+X_size-1]==0 || mazeArray[i+X_size-1]==2 || mazeArray[i+X_size-1]==3){
+						adjMatrix[i][i+X_size-1]=1;
+					}
+				}
+				if(k!=(X_size-1) && i>=X_size){
+					if(mazeArray[i-X_size+1]==0 || mazeArray[i-X_size+1]==2 || mazeArray[i-X_size+1]==3){
+						adjMatrix[i][i-X_size+1]=1;
+					}
+				}
+				if(k!=0 && i>=X_size){
+					if(mazeArray[i-X_size-1]==0 || mazeArray[i-X_size-1]==2 || mazeArray[i-X_size-1]==3){
+						adjMatrix[i][i-X_size-1]=1;
+					}
+				}
+			}
 			k++;
 			if(k>=X_size){
 				k=0;
@@ -49,19 +72,20 @@ public interface Algorithm {
 		return adjMatrix;
 	}
 	
-	default int[][] toMatrix(int[] array){
-		int max = (int) Math.sqrt(array.length);
-		int[][] matrix = new int[max][max];
+	default int[][] toMatrix(int[] array,int type, int X){
+		int max_X= X;
+		int max_Y= array.length/X;
+		int[][] matrix = new int[max_X][max_Y];
 		for(int x=0;x<array.length;x++){
 			int k = array[x];
 			int count = 0;
-			for(int i=0;i<max;i++){
-				for(int j=0;j<max;j++){
+			for(int i=0;i<max_X;i++){
+				for(int j=0;j<max_Y;j++){
 					if(k==-1){
 						return matrix;
 					}
 					if(count == k){
-						matrix[i][j]=5;
+						matrix[i][j]=type;
 					}
 				count++;
 				}
@@ -89,6 +113,7 @@ public interface Algorithm {
 		}
 		return 0;
 	}
+	
+	public void dispose();
 
-	public void printMaze();
 }

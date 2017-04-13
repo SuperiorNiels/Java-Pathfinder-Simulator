@@ -1,123 +1,117 @@
-
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class BFS implements Algorithm {
-	Maze maze;
-	int X_size;
-	int Y_size;
-	int[][] adjMatrix;
-	public BFS(Maze maze) {
-		this.maze = maze;
-		this.X_size = maze.maze[0].length;
-		this.Y_size = maze.maze[1].length;
+	private Settings settings;
+	public BFS(Settings settings) {
+		this.settings = settings;
 	}
 
-	@Override
 	public int[][] solve() {
-		int max = X_size*Y_size;
-		int[] pathArray = new int[max];
-		/*Path array initialization
-		 * -1 represents the end
-		 */
-		for(int i=0;i<pathArray.length;i++){
-			pathArray[i]=-1;
-		}
-		int X_stop = getStopPos(maze.maze);
-		int X_start = getStartPos(maze.maze);
-		int[] visited = new int[max];
-		int[] previous = new int[max];
-		adjMatrix = createAdjMatrix(maze.maze);
-		
-		/*BFS algorithm
-		 * This will place a vertex in the queue and mark it as visited
-		 * then check its neighbourghs and place the unvisited ones in the queue.
-		 * Then take the next item from the queue(remove) and do algorithm again
-		 * This until the queue is empty
-		 * 
-		 */
-		Queue<Integer> bfsq = new LinkedList<Integer>();
-		bfsq.add(X_start);
-		while(bfsq.peek()!=null){
-			int current = bfsq.remove();
-			if(visited[current]==1){
-				continue;
-			}
-			if(visited[current]==0){
-				visited[current] = 1;
-			}
-			if(current==X_stop){
-				//previous[X_stop] = X_stop;
-				break;
-			}
-			for(int j=0;j<adjMatrix[0].length;j++){
-				
-				if(adjMatrix[current][j]==1 && j!=current){
-					if(visited[j]==0){
-						bfsq.add(j);
-						previous[j] = current;
-						System.out.print(" "+j);
-					}
-					
+		LinkedList<Node> fifo = new LinkedList<Node>();
+		ArrayList<String> visited = new ArrayList<String>();
+		ArrayList<Node> raw_path = new ArrayList<Node>();
+		int[][] matrix = settings.getMaze().getMatrix();
+		int x = settings.getMaze_x();
+		int y = settings.getMaze_y();
+		for(int i=0;i<x;i++) {
+			for(int j=0;j<y;j++) {
+				if(matrix[i][j]==2) {
+					int[] temp = {i, j};
+					fifo.add(new Node(temp,null));
 				}
 			}
-			
 		}
 		
-		/*Path array
-		 * Create path array backtracking method: from dest to source
-		 * in path you will find the number of the tile which to go to next
-		 * then this array is transformed to a matrix and this matrix is returned
-		 */
-		int j = X_stop;
-		pathArray[0]=X_stop;
-		for(int i=1;i<previous.length;i++){
-			int next = previous[j];
-			pathArray[i] = next;
-			if(next==X_start){
-				break;
+		Boolean found = false;
+		Node p = null;
+		while(!fifo.isEmpty()) {
+			p = fifo.remove();
+			int[] current = p.getNode();
+			String to_add = current[0]+" "+current[1];
+ 			if(!visited.contains(to_add)) {
+				visited.add(to_add);
+				raw_path.add(p);
+				if(matrix[current[0]][current[1]]==3) {
+					found = true;
+					fifo = new LinkedList<Node>();
+				} else {
+					ArrayList<int[]> n = neighbors(current);
+					for(int i=0;i<n.size();i++) {
+						int[] neighbor = n.get(i);
+						fifo.add(new Node(neighbor,p));
+					}
+				}
 			}
-			j = next;
 		}
-		int [][] path = toMatrix(pathArray);
 		
-		
-		//Debugging 
-		System.out.println();
-		for(int i=0;i<previous.length;i++){
-			System.out.print(i);
-		}System.out.println();
-		for(int i=0;i<previous.length;i++){
-			System.out.print(visited[i]);
-		}System.out.println();
-		for(int i=0;i<previous.length;i++){
-			System.out.print(previous[i]);
-		}System.out.println();
-		for(int i=0;i<previous.length;i++){
-			System.out.print(pathArray[i]+" ");
-		}
-		System.out.println("\r\n");
-		for(int i=0;i<X_size;i++) {
-			for(int k=0;k<X_size;k++) {
-				System.out.print(path[i][k]);
+		ArrayList<String> path = new ArrayList<String>();
+		if(found) {
+			Node parent = p.getParent();
+			while(parent!=null) {
+				int[] point = parent.getNode();
+				path.add(point[0]+" "+point[1]);
+				parent = parent.getParent();
 			}
-			System.out.print("\n");
 		}
-		return path;
 		
-	}
-	
-	
-	public void printMaze() {
-		int max = X_size*Y_size;
-		for(int i=0;i<max;i++) {
-			for(int j=0;j<max;j++) {
-				System.out.print(adjMatrix[i][j]);
+		int[][] final_path = new int[x][y];
+		for(int i=0;i<x;i++) {
+			for(int j=0;j<y;j++) {
+				String temp = i+" "+j;
+				if(path.contains(temp)) {
+					final_path[i][j] = 5;
+				} else {
+					final_path[i][j] = 0;
+				}
 			}
-			System.out.print("\n");
 		}
-		System.out.print("\n");
+		
+		fifo = null;
+		matrix = null;
+		visited = null;
+		raw_path = null;
+		
+//		for(int i=0;i<x;i++) {
+//			for(int j=0;j<y;j++) {
+//				System.out.print(final_path[i][j]);
+//			}
+//			System.out.print("\n");
+//		}
+		
+		return final_path;
 	}
 
+	
+	public ArrayList<int[]> neighbors(int[] node) {
+		ArrayList<int[]> result = new ArrayList<int[]>();
+		int[][] matrix = settings.getMaze().getMatrix();
+		if(settings.getDiagonal()) {
+			int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1},{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+			for(int[] dir : dirs) {
+				int[] neighbor = {node[0] + dir[0], node[1] + dir[1]};
+				if(neighbor[0] >= 0 && neighbor[0] < settings.getMaze_x() && neighbor[1] >= 0 && neighbor[1] < settings.getMaze_y()) {
+					if(matrix[neighbor[0]][neighbor[1]]==0 || matrix[neighbor[0]][neighbor[1]]==3) {
+						result.add(neighbor);
+					}
+				}
+			}
+		} else {
+			int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+			for(int[] dir : dirs) {
+				int[] neighbor = {node[0] + dir[0], node[1] + dir[1]};
+				if(neighbor[0] >= 0 && neighbor[0] < settings.getMaze_x() && neighbor[1] >= 0 && neighbor[1] < settings.getMaze_y()) {
+					if(matrix[neighbor[0]][neighbor[1]]==0 || matrix[neighbor[0]][neighbor[1]]==3) {
+						result.add(neighbor);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+
+	public void dispose() {}
+	
 }
  

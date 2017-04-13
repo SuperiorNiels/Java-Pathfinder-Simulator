@@ -19,9 +19,10 @@ public class A_star implements Algorithm {
 	}
 
 	@Override
-	public void printMaze() {
+	public void dispose() {
 		// TODO Auto-generated method stub
 		
 	}
 
+	
 }

@@ -98,7 +98,7 @@ public class GUI extends JFrame {
 			}
 		};
 		
-		// Matrix actions (temp)
+		// Matrix actions 
 		ActionListener printMatrix = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				settings.getMaze().printMaze();
@@ -163,7 +163,7 @@ public class GUI extends JFrame {
 		JMenuItem quit = new JMenuItem("Quit");
 		quit.addActionListener(quitAction);
 		file.add(quit);
-		JMenu settings_tab = new JMenu("Settings");
+		JMenu settings_tab = new JMenu("Tools");
 		//settings_tab.add(new JMenuItem("Grid width"));
 		//settings_tab.add(new JMenuItem("Grid height"));
 		JMenuItem print = new JMenuItem("Print Matrix");
@@ -184,7 +184,16 @@ public class GUI extends JFrame {
 		settings_tab.add(printSettings);
 		menu.add(file);
 		menu.add(settings_tab);
-		setJMenuBar(menu);		
+		setJMenuBar(menu);
+		
+//		/* Memory output */
+//		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+//		exec.scheduleAtFixedRate(new Runnable() {
+//		  public void run() {
+//			  MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+//			  System.out.println(heapMemoryUsage.getUsed());
+//		  }
+//		}, 0, 2, TimeUnit.SECONDS);
 		
 		/*
 		 * Create Grid Panel
@@ -213,8 +222,8 @@ public class GUI extends JFrame {
 		ActionListener solveAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				repaintMatrix();
-				settings.updatePathfinder();
-				int[][] solution = settings.getPathFinder().solve();
+				PathAlgorithm p = new PathAlgorithm(settings);
+				int[][] solution = p.solve();
 				int[][] maze = settings.getMaze().getMatrix();
 				int maze_x = settings.getMaze_x();
 				int maze_y = settings.getMaze_y();
