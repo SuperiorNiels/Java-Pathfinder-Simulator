@@ -18,8 +18,10 @@ public class PathAlgorithm {
 	}
 	
 	public int[][] solve() {
-		int [][] res = a.solve();
-		//a.printMaze();
-		return res;
+		return a.solve();
+	}
+	
+	public int getIterations() {
+		return a.getIterations();
 	}
 }

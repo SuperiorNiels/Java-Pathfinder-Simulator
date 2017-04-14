@@ -45,6 +45,7 @@ public class GUI extends JFrame {
 	private Settings settings;
 	HashMap<String, JLabel> grid_labels = new HashMap<String,JLabel>();
 	JPanel grid_holder;
+	JLabel iterations;
 	public GUI(String title, Settings settings) {
 		this.title = title;
 		this.settings = settings;
@@ -180,6 +181,15 @@ public class GUI extends JFrame {
 			}
 		});
 		settings_tab.add(printSettings);
+		JMenuItem random = new JMenuItem("Fill Random");
+		random.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Maze maze = settings.getMaze();
+				maze.fillRandom();
+				repaintMatrix();
+			}
+		});
+		settings_tab.add(random);
 		menu.add(file);
 		menu.add(settings_tab);
 		setJMenuBar(menu);
@@ -222,6 +232,8 @@ public class GUI extends JFrame {
 				repaintMatrix();
 				PathAlgorithm p = new PathAlgorithm(settings);
 				int[][] solution = p.solve();
+				int it = p.getIterations();
+				iterations.setText("Iterations: "+it);
 				int[][] maze = settings.getMaze().getMatrix();
 				int maze_x = settings.getMaze_x();
 				int maze_y = settings.getMaze_y();
@@ -381,6 +393,8 @@ public class GUI extends JFrame {
 		JButton solve = new JButton("Solve");
 		solve.addActionListener(solveAction);
 		simulation_options.add(solve);
+		iterations = new JLabel("Iterations: 0");
+		simulation_options.add(iterations);
 		options.add(algorithm_options);
 		options.add(grid_options);
 		options.add(simulation_options);

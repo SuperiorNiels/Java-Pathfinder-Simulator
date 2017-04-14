@@ -1,4 +1,4 @@
-
+import java.util.Random;
 
 public class Maze {
 	int[][] maze;
@@ -61,6 +61,22 @@ public class Maze {
 		int[][] newMaze = new int[X_newsize][Y_newsize];
 		maze = newMaze;
 		initializeMaze();
+	}
+	
+	public void fillRandom() {
+		Random r = new Random();
+		for(int i=0;i<X_size;i++) {
+			for(int j=0;j<Y_size;j++) {
+				int rand = r.nextInt(2);
+				if(rand == 0) {
+					maze[i][j] = 1;
+				} else {
+					maze[i][j] = 0;
+				}
+			}		
+		}
+		maze[0][0] = 2;
+		maze[X_size-1][Y_size-1] = 3;
 	}
 	
 	public void printMaze() {

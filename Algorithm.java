@@ -1,6 +1,8 @@
 
 public interface Algorithm {
 	public int[][] solve();
+	
+	public int getIterations();
 
 	default int[] toArray(int[][] matrix) {
 		int[] res = new int[matrix[0].length*matrix.length];

@@ -86,5 +86,12 @@ public class Dijkstra implements Algorithm {
 			e.printStackTrace();
 		}	
 	}
+
+
+	@Override
+	public int getIterations() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

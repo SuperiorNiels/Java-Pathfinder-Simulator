@@ -3,6 +3,7 @@ import java.util.LinkedList;
 
 public class BFS implements Algorithm {
 	private Settings settings;
+	private int iterations = 0;
 	public BFS(Settings settings) {
 		this.settings = settings;
 	}
@@ -43,6 +44,7 @@ public class BFS implements Algorithm {
 					}
 				}
 			}
+ 			iterations++;
 		}
 		
 		ArrayList<String> path = new ArrayList<String>();
@@ -84,7 +86,6 @@ public class BFS implements Algorithm {
 		return final_path;
 	}
 
-	
 	public ArrayList<int[]> neighbors(int[] node) {
 		ArrayList<int[]> result = new ArrayList<int[]>();
 		int[][] matrix = settings.getMaze().getMatrix();
@@ -110,6 +111,10 @@ public class BFS implements Algorithm {
 			}
 		}
 		return result;
+	}
+	
+	public int getIterations() {
+		return iterations;
 	}
 
 

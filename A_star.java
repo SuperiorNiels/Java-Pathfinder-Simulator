@@ -24,5 +24,11 @@ public class A_star implements Algorithm {
 		
 	}
 
+	@Override
+	public int getIterations() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	
 }
