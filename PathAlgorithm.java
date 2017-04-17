@@ -11,17 +11,33 @@ public class PathAlgorithm {
 			case "Dijkstra": 
 				a = new Dijkstra(settings);
 				break;
+			case "Depth-first search": 
+				a = new DFS(settings);
+				break;
 			default:
 				a = new BFS(settings);
 				break;
 		}
 	}
 	
-	public int[][] solve() {
-		return a.solve();
+	public int[][] getSolution() {
+		return a.getSolution();
 	}
 	
 	public int getIterations() {
 		return a.getIterations();
 	}
+	
+	public void intitialze() {
+		a.initialize();
+	}
+	
+	public int[][] getNextStep() {
+		return a.getNextStep();
+	}
+	
+	public Boolean solved() {
+		return a.solved();
+	}
+	
 }

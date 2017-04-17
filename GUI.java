@@ -16,6 +16,8 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.awt.Insets;
 
 import javax.swing.AbstractButton;
@@ -40,12 +42,17 @@ import javax.swing.event.ChangeListener;
 
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
+	
 	private String title;
 	private FileHandler fileHandler;
 	private Settings settings;
-	HashMap<String, JLabel> grid_labels = new HashMap<String,JLabel>();
-	JPanel grid_holder;
-	JLabel iterations;
+	private HashMap<String, JLabel> grid_labels = new HashMap<String,JLabel>();
+	private JPanel grid_holder;
+	private JLabel iterations;
+	private PathAlgorithm solver = null;
+	private Timer timer = null;
+	private Boolean running = false;
+	
 	public GUI(String title, Settings settings) {
 		this.title = title;
 		this.settings = settings;
@@ -71,6 +78,7 @@ public class GUI extends JFrame {
 				new GUI("Pathfinder Simulator", new Settings());
 			}
 		};
+		
 		ActionListener openAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!fileHandler.open()) {
@@ -80,18 +88,21 @@ public class GUI extends JFrame {
 				}
 			}
 		};
+		
 		ActionListener saveAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fileHandler.save();
 				setTitle("Pathfinder Simulator - "+fileHandler.getFileName());
 			}
 		};
+		
 		ActionListener saveAsAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fileHandler.saveAs();
 				setTitle("Pathfinder Simulator - "+fileHandler.getFileName());
 			}
 		};
+		
 		ActionListener quitAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
@@ -143,7 +154,7 @@ public class GUI extends JFrame {
 		};
 		
 		/*
-		 * Add Menu Bar
+		 * Menu Bar
 		 */
 		JMenuBar menu = new JMenuBar();
 		JMenu file = new JMenu("File");
@@ -204,7 +215,7 @@ public class GUI extends JFrame {
 //		}, 0, 2, TimeUnit.SECONDS);
 		
 		/*
-		 * Create Grid Panel
+		 * Create Grid 
 		 */
 		grid_holder = new JPanel(new GridBagLayout());
 		addGrid(grid_holder,715);
@@ -229,26 +240,119 @@ public class GUI extends JFrame {
 		
 		ActionListener solveAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(solver==null) {
+					repaintMatrix();
+					createSolver();
+					int[][] solution = solver.getSolution();
+					int it = solver.getIterations();
+					iterations.setText("Iterations: "+it);
+					drawSolution(solution);
+				} else {
+					int[][] solution = solver.getSolution();
+					int it = solver.getIterations();
+					iterations.setText("Iterations: "+it);
+					drawSolution(solution);
+				}
+				solver = null;
+			}
+		};		
+		
+		ActionListener stop_action = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					timer.cancel();
+				}
+				catch (NullPointerException e1) {} // No timer set
+				solver = null;
+				running = false;
 				repaintMatrix();
-				PathAlgorithm p = new PathAlgorithm(settings);
-				int[][] solution = p.solve();
-				int it = p.getIterations();
-				iterations.setText("Iterations: "+it);
-				int[][] maze = settings.getMaze().getMatrix();
-				int maze_x = settings.getMaze_x();
-				int maze_y = settings.getMaze_y();
-				for (int i=0;i<maze_x;i++) {
-					for (int j=0;j<maze_y;j++) {
-						JLabel temp = grid_labels.get(i+" "+j);
-						if(maze[i][j]==0 && solution[i][j]==5) {
-							temp.setBackground(Color.YELLOW);
-						} else if(maze[i][j]==0 && solution[i][j]==6) {
-							temp.setBackground(Color.GRAY);
-						}
+			}
+		};
+		
+		ActionListener pause_action = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					timer.cancel();
+				}
+				catch (NullPointerException e1) {} // No timer set
+			}
+		};
+		
+		ActionListener start_action = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!running) {
+					repaintMatrix();
+					createSolver();
+					running = true;		
+				}
+				if(running) {
+					timer = new Timer();
+					TimerTask step = new TimerTask() {
+					    public void run() {
+					    	if(!solver.solved()) {
+					    		int[][] solution = solver.getNextStep();
+					    		int it = solver.getIterations();
+					    		iterations.setText("Iterations: "+it);
+					    		drawSolution(solution);
+					    	} else {
+					    		timer.cancel();
+					    		running = false;
+					    	}
+					    }
+					};
+					timer.schedule(step, 0, (long) Math.pow(2, 10-settings.getSpeed()));
+				}
+			}
+		};
+		
+		ActionListener step_action = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!running) {
+					if(solver!=null && !solver.solved()) {
+						int[][] solution = solver.getNextStep();
+						int it = solver.getIterations();
+						iterations.setText("Iterations: "+it);
+						drawSolution(solution);
+					} else {
+						repaintMatrix();
+						createSolver();
+						int[][] solution = solver.getNextStep();
+						int it = solver.getIterations();
+						iterations.setText("Iterations: "+it);
+						drawSolution(solution);
 					}
 				}
 			}
 		};
+		
+		ChangeListener changeSpeed = new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider temp = (JSlider) e.getSource();
+				settings.setSpeed(temp.getValue());
+				if(running) {
+					try {
+						timer.cancel();
+					}
+					catch (NullPointerException e1) {} // Timer Set
+					timer = new Timer();
+					TimerTask step = new TimerTask() {
+					    public void run() {
+					    	if(!solver.solved()) {
+					    		int[][] solution = solver.getNextStep();
+					    		int it = solver.getIterations();
+					    		iterations.setText("Iterations: "+it);
+					    		drawSolution(solution);
+					    	} else {
+					    		timer.cancel();
+					    		running = false;
+					    	}
+					    }
+					};
+					timer.schedule(step, 0, (long) Math.pow(2, 10-settings.getSpeed()));
+				}
+			}
+		};
+		
 				
 		/*
 		 * Create Option Panel
@@ -373,28 +477,31 @@ public class GUI extends JFrame {
 		Border simulation_options_title = BorderFactory.createTitledBorder("Simulation");
 		simulation_options.setBorder(simulation_options_title);
 		JButton stop = new JButton("Stop");
+		stop.addActionListener(stop_action);
 		simulation_options.add(stop);
+		JButton pause = new JButton("Pause");
+		pause.addActionListener(pause_action);
+		simulation_options.add(pause);
 		JButton play = new JButton("Start");
+		play.addActionListener(start_action);
 		simulation_options.add(play);
-		JButton next = new JButton("Next Step");
-		simulation_options.add(next);
-		JSlider speed = new JSlider(1, 10, 1);
+		JSlider speed = new JSlider(0, 10, 0);
 		speed.setMinorTickSpacing(1);
 		speed.setMajorTickSpacing(5);
 		speed.setPaintTicks(true);
 		speed.setSnapToTicks(true);
-		speed.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSlider temp = (JSlider) e.getSource();
-				settings.setSpeed(temp.getValue());
-			}
-		});
+		speed.addChangeListener(changeSpeed);
 		simulation_options.add(speed);
 		JButton solve = new JButton("Solve");
 		solve.addActionListener(solveAction);
 		simulation_options.add(solve);
+		JButton next = new JButton("Step by Step");
+		next.addActionListener(step_action);
+		simulation_options.add(next);
+		JPanel simulation_info = new JPanel(); 
 		iterations = new JLabel("Iterations: 0");
-		simulation_options.add(iterations);
+		simulation_info.add(iterations);	
+		simulation_options.add(simulation_info);
 		options.add(algorithm_options);
 		options.add(grid_options);
 		options.add(simulation_options);
@@ -406,6 +513,32 @@ public class GUI extends JFrame {
 		 */
 		setBounds(30,30,1000,800);
 		setVisible(true);
+	}
+	
+	/*
+	 * Solver actions
+	 */
+	public void createSolver() {
+		solver = new PathAlgorithm(settings);
+		solver.intitialze();
+	}
+	
+	public void drawSolution(int[][] solution) {
+		int[][] maze = settings.getMaze().getMatrix();
+		int maze_x = settings.getMaze_x();
+		int maze_y = settings.getMaze_y();
+		for (int i=0;i<maze_x;i++) {
+			for (int j=0;j<maze_y;j++) {
+				JLabel temp = grid_labels.get(i+" "+j);
+				if(maze[i][j]==0 && solution[i][j]==5) {
+					temp.setBackground(Color.YELLOW);
+				} else if(maze[i][j]==0 && solution[i][j]==6) {
+					temp.setBackground(Color.LIGHT_GRAY);
+				} else if(maze[i][j]==0 && solution[i][j]==7) {
+					temp.setBackground(Color.DARK_GRAY);
+				}
+			}
+		}
 	}
 	
 	/*

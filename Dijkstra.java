@@ -6,6 +6,7 @@ public class Dijkstra implements Algorithm {
 	int[][] adjMatrix;
 	Boolean found = false;
 	Settings settings;
+	private int iterations = 0;
 	public Dijkstra(Settings settigns) {
 		this.settings = settigns;
 		this.maze = settings.getMaze();
@@ -15,7 +16,7 @@ public class Dijkstra implements Algorithm {
 	
 		
 	@Override
-	public int[][] solve() {
+	public int[][] getSolution() {
 		int length = X_size*Y_size;
 		int[] best = new int[length];
 		int[] previous = new int[length];
@@ -51,6 +52,7 @@ public class Dijkstra implements Algorithm {
 					previous[j]=currentNode;
 				}
 			}
+			iterations++;
 		}
 
 		
@@ -89,9 +91,38 @@ public class Dijkstra implements Algorithm {
 
 
 	@Override
-	public int getIterations() {
+	public void initialize() {
 		// TODO Auto-generated method stub
-		return 0;
+		
 	}
+
+
+	@Override
+	public int[][] getNextStep() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Boolean solved() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public int getIterations() {
+		return iterations;
+	}
+
+
+	@Override
+	public void step() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 	
 }

@@ -1,8 +1,12 @@
 
 public interface Algorithm {
-	public int[][] solve();
-	
+	public void initialize();
+	public int[][] getNextStep();
+	public int[][] getSolution();
+	public void step();
+	public Boolean solved();
 	public int getIterations();
+	public void dispose();
 
 	default int[] toArray(int[][] matrix) {
 		int[] res = new int[matrix[0].length*matrix.length];
@@ -115,7 +119,5 @@ public interface Algorithm {
 		}
 		return 0;
 	}
-	
-	public void dispose();
 
 }
