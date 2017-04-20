@@ -4,7 +4,7 @@ public class Settings {
 	private int maze_y = 20;
 	private Boolean diagonal = false;
 	private String algorithm;
-	private int speed = 1;
+	private int speed = 0;
 	private Maze maze;
 	private String path = "";
 	public Settings() {

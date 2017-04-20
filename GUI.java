@@ -30,12 +30,12 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -403,17 +403,23 @@ public class GUI extends JFrame {
 		c.gridy = 0;
 		grid_size.add(new JLabel("Grid size: "),c);
 		String[] labels = {"X: ", "Y: "};
-		HashMap<String, JTextField> size_fields = new HashMap<String, JTextField>();
+		HashMap<String, JSpinner> size_fields = new HashMap<String, JSpinner>();
 		for(int i=0;i<labels.length;i++) {
 			JLabel label = new JLabel(labels[i], JLabel.TRAILING);
 			c.gridx = 1;
 			c.gridy = i+1;
 			grid_size.add(label,c);
-		    JTextField textField = new JTextField(10);
+			SpinnerNumberModel spinnerNumbers = null;
+			if(i == 0) {
+				spinnerNumbers = new SpinnerNumberModel(settings.getMaze_x(), 1, 99, 1);
+			} else if(i == 1) {
+				spinnerNumbers = new SpinnerNumberModel(settings.getMaze_y(), 1, 99, 1);
+			}
+			JSpinner spinner = new JSpinner(spinnerNumbers);
 		    c.gridx = 2;
-		    size_fields.put(labels[i], textField);
-		    label.setLabelFor(textField);
-		    grid_size.add(textField,c);
+		    size_fields.put(labels[i], spinner);
+		    label.setLabelFor(spinner);
+		    grid_size.add(spinner,c);
 		}
 		JButton submit = new JButton("Set Size");
 		c.gridx = 2;
@@ -421,26 +427,24 @@ public class GUI extends JFrame {
 		c.insets = new Insets(10,0,0,0);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Boolean error = false;
-				int test = 0;
+				Boolean changed = false;
 				for(String label : labels) {
-					JTextField temp = size_fields.get(label);
-					String text = temp.getText();
-					try {
-						int number = Integer.parseInt(text);
-						if(number==settings.getMaze_x() || number==settings.getMaze_y()) {
-							test++;
+					JSpinner temp = size_fields.get(label);
+					int number = (int) temp.getValue();
+					if(label == "X: ") {
+						if(number!=settings.getMaze_x()) {
+							changed = true;
+							settings.setMaze_x(number);
 						}
-						if(number>0 && !error) {
-							if(label == "X: ") {settings.setMaze_x(number);}
-							if(label == "Y: ") {settings.setMaze_y(number);}
-						} else {error = true;}
-					} catch(NumberFormatException n) {
-						error = true;
-					}	
+					}
+					if(label == "Y: ") {
+						if(number!=settings.getMaze_y()) {
+							changed = true;
+							settings.setMaze_y(number);
+						}
+					}
 				}
-				if(error) {JOptionPane.showMessageDialog(null, "Please input (positive) integers for X and Y.");}
-				if(test!=0 && error==false) {
+				if(changed) {
 					Dimension size = grid_holder.getBounds().getSize();
 					remove(grid_holder);
 					grid_holder = new JPanel(new GridBagLayout());
@@ -460,6 +464,7 @@ public class GUI extends JFrame {
 					}
 					revalidate();
 					repaint();
+					changed = false;
 				}
 				
 			}
@@ -485,7 +490,7 @@ public class GUI extends JFrame {
 		JButton play = new JButton("Start");
 		play.addActionListener(start_action);
 		simulation_options.add(play);
-		JSlider speed = new JSlider(0, 10, 0);
+		JSlider speed = new JSlider(0, 10, settings.getSpeed());
 		speed.setMinorTickSpacing(1);
 		speed.setMajorTickSpacing(5);
 		speed.setPaintTicks(true);
