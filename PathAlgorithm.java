@@ -40,4 +40,8 @@ public class PathAlgorithm {
 		return a.solved();
 	}
 	
+	public Boolean running() {
+		return a.running();
+	}
+	
 }

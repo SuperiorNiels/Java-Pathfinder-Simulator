@@ -7,6 +7,7 @@ public class BFS implements Algorithm {
 	private ArrayList<String> visited;
 	private ArrayList<Node> raw_path;
 	private Boolean found = false;
+	private Boolean running = true;
 	private int iterations = 0;
 	Node current_node;
 	
@@ -84,6 +85,10 @@ public class BFS implements Algorithm {
 			solution[current[0]][current[1]] = 7;
 		}
 		
+		if(fifo.isEmpty()) {
+			running = false;
+		}
+		
 		return solution;
 	}
 
@@ -94,6 +99,8 @@ public class BFS implements Algorithm {
 		while(!fifo.isEmpty()) {
 			step();
 		}
+		
+		running = false;
 		
 		int x = settings.getMaze_x();
 		int y = settings.getMaze_y();
@@ -165,7 +172,6 @@ public class BFS implements Algorithm {
 		iterations++;
 	}
 
-
 	public ArrayList<int[]> neighbors(int[] node) {
 		ArrayList<int[]> result = new ArrayList<int[]>();
 		int[][] matrix = settings.getMaze().getMatrix();
@@ -180,7 +186,7 @@ public class BFS implements Algorithm {
 				}
 			}
 		} else {
-			int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+			int[][] dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 			for(int[] dir : dirs) {
 				int[] neighbor = {node[0] + dir[0], node[1] + dir[1]};
 				if(neighbor[0] >= 0 && neighbor[0] < settings.getMaze_x() && neighbor[1] >= 0 && neighbor[1] < settings.getMaze_y()) {
@@ -191,6 +197,11 @@ public class BFS implements Algorithm {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public Boolean running() {
+		return running;	
 	}
 
 }

@@ -71,4 +71,10 @@ public class DFS implements Algorithm {
 		return result;
 	}
 
+	@Override
+	public Boolean running() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

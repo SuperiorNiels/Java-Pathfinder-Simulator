@@ -52,6 +52,8 @@ public class GUI extends JFrame {
 	private PathAlgorithm solver = null;
 	private Timer timer = null;
 	private Boolean running = false;
+	private Boolean paused = false;
+	private Boolean timer_excists = false;
 	
 	public GUI(String title, Settings settings) {
 		this.title = title;
@@ -132,6 +134,8 @@ public class GUI extends JFrame {
 						}
 					}
 				}
+				stopAnimation();
+				repaintMatrix();
 			}
 		};
 		
@@ -150,6 +154,20 @@ public class GUI extends JFrame {
 						}
 					}
 				}
+				stopAnimation();
+				repaintMatrix();
+			}
+		};
+		
+		ActionListener simulationInfo = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(solver!=null) {
+					System.out.println("Solved: "+solver.solved());
+				}
+				System.out.println("Paused: "+paused);
+				System.out.println("Running: "+running);
+				System.out.println("Timer_excists: "+timer_excists);
+				System.out.println("Speed: "+(long) Math.pow(2, 10-settings.getSpeed())+"\n");
 			}
 		};
 		
@@ -197,10 +215,14 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Maze maze = settings.getMaze();
 				maze.fillRandom();
+				stopAnimation();
 				repaintMatrix();
 			}
 		});
 		settings_tab.add(random);
+		JMenuItem sim_info = new JMenuItem("Simulation Info");
+		sim_info.addActionListener(simulationInfo);
+		settings_tab.add(sim_info);
 		menu.add(file);
 		menu.add(settings_tab);
 		setJMenuBar(menu);
@@ -227,6 +249,8 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				AbstractButton button = (AbstractButton) e.getSource();
 				settings.setAlgorithm(button.getText());
+				stopAnimation();
+				repaintMatrix();
 			}
 		};
 		
@@ -235,6 +259,8 @@ public class GUI extends JFrame {
 				AbstractButton abstractButton = (AbstractButton) e.getSource();
 		        boolean selected = abstractButton.getModel().isSelected();
 				settings.setDiagonal(selected);
+				stopAnimation();
+				repaintMatrix();
 			}
 		};
 		
@@ -259,22 +285,23 @@ public class GUI extends JFrame {
 		
 		ActionListener stop_action = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					timer.cancel();
+				if(running) {
+					stopAnimation();
+					repaintMatrix();
 				}
-				catch (NullPointerException e1) {} // No timer set
-				solver = null;
-				running = false;
-				repaintMatrix();
 			}
 		};
 		
 		ActionListener pause_action = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					timer.cancel();
+				if(running) {
+					try {
+						timer.cancel();
+					}
+					catch (NullPointerException e1) {} // No timer set
+					paused = true;
+					timer_excists = false;
 				}
-				catch (NullPointerException e1) {} // No timer set
 			}
 		};
 		
@@ -285,18 +312,46 @@ public class GUI extends JFrame {
 					createSolver();
 					running = true;		
 				}
-				if(running) {
+				if(running && !timer_excists) {
 					timer = new Timer();
 					TimerTask step = new TimerTask() {
 					    public void run() {
-					    	if(!solver.solved()) {
+					    	if(!solver.solved() && solver.running()) {
 					    		int[][] solution = solver.getNextStep();
 					    		int it = solver.getIterations();
 					    		iterations.setText("Iterations: "+it);
 					    		drawSolution(solution);
 					    	} else {
-					    		timer.cancel();
-					    		running = false;
+					    		stopAnimation();
+					    	}
+					    }
+					};
+					paused = false;
+					timer_excists = true;
+					timer.schedule(step, 0, (long) Math.pow(2, 10-settings.getSpeed()));
+				}
+			}
+		};
+		
+		ChangeListener changeSpeed = new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider temp = (JSlider) e.getSource();
+				settings.setSpeed(temp.getValue());
+				if(running && !paused) {
+					try {
+						timer.cancel();
+					}
+					catch (NullPointerException e1) {} // No Timer Set
+					timer = new Timer();
+					TimerTask step = new TimerTask() {
+					    public void run() {
+					    	if(!solver.solved() && solver.running()) {
+					    		int[][] solution = solver.getNextStep();
+					    		int it = solver.getIterations();
+					    		iterations.setText("Iterations: "+it);
+					    		drawSolution(solution);
+					    	} else {
+					    		stopAnimation();
 					    	}
 					    }
 					};
@@ -307,12 +362,16 @@ public class GUI extends JFrame {
 		
 		ActionListener step_action = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!running) {
+				if(!running || paused) {
 					if(solver!=null && !solver.solved()) {
 						int[][] solution = solver.getNextStep();
 						int it = solver.getIterations();
 						iterations.setText("Iterations: "+it);
 						drawSolution(solution);
+						if(solver.solved()) {
+							running = false;
+							paused = false;
+						}
 					} else {
 						repaintMatrix();
 						createSolver();
@@ -321,34 +380,6 @@ public class GUI extends JFrame {
 						iterations.setText("Iterations: "+it);
 						drawSolution(solution);
 					}
-				}
-			}
-		};
-		
-		ChangeListener changeSpeed = new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSlider temp = (JSlider) e.getSource();
-				settings.setSpeed(temp.getValue());
-				if(running) {
-					try {
-						timer.cancel();
-					}
-					catch (NullPointerException e1) {} // Timer Set
-					timer = new Timer();
-					TimerTask step = new TimerTask() {
-					    public void run() {
-					    	if(!solver.solved()) {
-					    		int[][] solution = solver.getNextStep();
-					    		int it = solver.getIterations();
-					    		iterations.setText("Iterations: "+it);
-					    		drawSolution(solution);
-					    	} else {
-					    		timer.cancel();
-					    		running = false;
-					    	}
-					    }
-					};
-					timer.schedule(step, 0, (long) Math.pow(2, 10-settings.getSpeed()));
 				}
 			}
 		};
@@ -445,6 +476,7 @@ public class GUI extends JFrame {
 					}
 				}
 				if(changed) {
+					stopAnimation();
 					Dimension size = grid_holder.getBounds().getSize();
 					remove(grid_holder);
 					grid_holder = new JPanel(new GridBagLayout());
@@ -464,6 +496,7 @@ public class GUI extends JFrame {
 					}
 					revalidate();
 					repaint();
+					solver = null;
 					changed = false;
 				}
 				
@@ -546,6 +579,16 @@ public class GUI extends JFrame {
 		}
 	}
 	
+	public void stopAnimation() {
+		try {
+			timer.cancel();
+		} catch(NullPointerException e) {}
+		running = false;
+		paused = false;
+		timer_excists = false;
+		solver = null;
+	}
+	
 	/*
 	 * MouseListener for grid, gets maze from Settings,
 	 * then gets x and y coordinates
@@ -565,6 +608,8 @@ public class GUI extends JFrame {
 		public void mousePressed(MouseEvent e) {
 			if(e.getButton()==MouseEvent.BUTTON1) {
 				mouseDown = true;
+				stopAnimation();
+				repaintMatrix();
 				startColor = e.getComponent().getBackground();
 				if (startColor == Color.RED || startColor == Color.GREEN) {
 					String name = e.getComponent().getName();

@@ -49,5 +49,11 @@ public class A_star implements Algorithm {
 		
 	}
 
+	@Override
+	public Boolean running() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 }
