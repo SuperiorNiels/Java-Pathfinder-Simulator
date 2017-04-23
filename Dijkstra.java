@@ -10,6 +10,7 @@ public class Dijkstra implements Algorithm {
 	private Boolean found = false;
 	private int iterations = 0;
 	Node current_node;
+	private Boolean running = true;
 	
 	public Dijkstra(Settings settings) {
 		this.settings = settings;
@@ -252,7 +253,7 @@ public class Dijkstra implements Algorithm {
 
 	@Override
 	public Boolean running() {
-		return null;
+		return running;
 	}
 
 	

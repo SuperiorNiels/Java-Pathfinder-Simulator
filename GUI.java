@@ -606,10 +606,10 @@ public class GUI extends JFrame {
 	MouseListener addObstacle = new MouseListener() {
 		public void mouseClicked(MouseEvent e) {}
 		public void mousePressed(MouseEvent e) {
+			stopAnimation();
+			repaintMatrix();
 			if(e.getButton()==MouseEvent.BUTTON1) {
 				mouseDown = true;
-				stopAnimation();
-				repaintMatrix();
 				startColor = e.getComponent().getBackground();
 				if (startColor == Color.RED || startColor == Color.GREEN) {
 					String name = e.getComponent().getName();
