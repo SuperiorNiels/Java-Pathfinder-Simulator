@@ -4,10 +4,9 @@ public class Settings {
 	private int maze_y = 20;
 	private Boolean diagonal = false;
 	private String algorithm;
-	private int speed = 1;
+	private int speed = 0;
 	private Maze maze;
 	private String path = "";
-	private PathAlgorithm p;
 	public Settings() {
 		setMaze(new Maze(maze_x,maze_y));
 		setAlgorithm("A*");
@@ -55,14 +54,6 @@ public class Settings {
 		this.algorithm = algorithm;
 	}
 	
-	public PathAlgorithm getPathFinder() {
-		return p;
-	}
-	
-	public void updatePathfinder() {
-		p = new PathAlgorithm(this);
-	}
-	
 	public int getSpeed() {
 		return speed;
 	}
@@ -85,6 +76,5 @@ public class Settings {
 		System.out.println(diagonal);
 		System.out.println(speed);
 		System.out.println(path+"\n");
-
 	}
 }

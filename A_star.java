@@ -1,21 +1,58 @@
 
 public class A_star implements Algorithm {
-	Maze maze;
-	int X_size;
-	int Y_size;
 	
-	public A_star(Maze maze) {
-		this.maze = maze;
-		this.X_size = maze.maze[0].length;
-		this.Y_size = maze.maze[1].length;
+	private int iterations = 0;
+	
+	//private Settings settings;
+	public A_star(Settings settings) {
+		//this.settings = settings;
 	}
 
 	@Override
-	public int[][] solve(Boolean diagonal) {
-		int [][] path = new int [X_size*Y_size][X_size*Y_size];
+	public void initialize() {
+		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public int[][] getNextStep() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int[][] getSolution() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean solved() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getIterations() {
+		return iterations;
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
 		
-		return path;
+	}
+
+	@Override
+	public void step() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Boolean running() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	
