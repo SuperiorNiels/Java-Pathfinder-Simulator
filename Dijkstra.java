@@ -2,7 +2,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Dijkstra implements Algorithm {
-
+	
+	
 	private Settings settings;
 	private ArrayList<String> visited;
 	private int[][] distance;
@@ -98,6 +99,7 @@ public class Dijkstra implements Algorithm {
 		while(!done) {
 			step();
 		}
+		running = false;
 		double t1 = System.nanoTime();
 		System.out.println(t1-t0);
 		t0 = System.nanoTime();
