@@ -98,6 +98,9 @@ public class A_star implements Algorithm {
 			solution[current[0]][current[1]] = 7;
 		}
 		
+		if(found || open.isEmpty()){
+			running = false;
+		}
 		return solution;
 	}
 
@@ -109,7 +112,7 @@ public class A_star implements Algorithm {
 		int[][] matrix = settings.getMaze().getMatrix();
 		ArrayList<String> path = new ArrayList<String>();
 		double t0 = System.nanoTime();
-		while(!open.isEmpty() || !found) {
+		while(!open.isEmpty()) {
 			step();
 		}
 		running = false;
