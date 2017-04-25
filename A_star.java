@@ -43,9 +43,11 @@ public class A_star implements Algorithm {
 					gScore[i][j] = 0; //starting point
 					open.put(start[0]+" "+start[1],start);
 				}
-				if(matrix[i][j]==3){
+				else if(matrix[i][j]==3){
 					stop[0] = i;
 					stop[1] = j;
+					gScore[i][j] = INF;
+					fScore[i][j] = 0;
 				}
 				else {
 					gScore[i][j] = INF; //To represent infinity
@@ -54,11 +56,6 @@ public class A_star implements Algorithm {
 			}
 		}
 		fScore[start[0]][start[1]] = heuristic_cost_estimate(start,stop);
-	}
-	
-	public double heuristic_cost_estimate(int[] start, int[] stop){
-		double value = Math.sqrt(Math.pow(start[0]+stop[0],2)+Math.pow(start[1]+stop[1],2));
-		return value;
 	}
 	
 	@Override
@@ -112,7 +109,7 @@ public class A_star implements Algorithm {
 		int[][] matrix = settings.getMaze().getMatrix();
 		ArrayList<String> path = new ArrayList<String>();
 		double t0 = System.nanoTime();
-		while(!open.isEmpty()) {
+		while(!open.isEmpty() || !found) {
 			step();
 		}
 		running = false;
@@ -157,8 +154,7 @@ public class A_star implements Algorithm {
 
 	@Override
 	public Boolean solved() {
-		// TODO Auto-generated method stub
-		return null;
+		return found;
 	}
 
 	@Override
@@ -186,7 +182,7 @@ public class A_star implements Algorithm {
 			int [] neighbor = n.get(i);
 			if(closed.containsKey(neighbor[0]+" "+neighbor[1]))
 				continue;
-			int tentative_gScore = gScore[current[0]][current[1]] +1;
+			int tentative_gScore = gScore[current[0]][current[1]] + node_to_node_cost(current,neighbor);
 			if(!open.containsKey(neighbor[0]+" "+neighbor[1]))
 				open.put(neighbor[0]+" "+neighbor[1],neighbor);
 			else if(tentative_gScore>=gScore[current[0]][current[1]])
@@ -194,7 +190,6 @@ public class A_star implements Algorithm {
 			prev.put(neighbor[0]+" "+neighbor[1], current);
 			gScore[neighbor[0]][neighbor[1]] = tentative_gScore;
 			fScore[neighbor[0]][neighbor[1]] = gScore[neighbor[0]][neighbor[1]] + heuristic_cost_estimate(neighbor,stop);
-			System.out.println("YES");
 		}
 		iterations++;
 	}
@@ -215,6 +210,23 @@ public class A_star implements Algorithm {
 		return shortest;
 	}
 	
+	public double heuristic_cost_estimate(int[] start, int[] stop){
+		double value = Math.sqrt(Math.pow(start[0]-stop[0],2)+Math.pow(start[1]-stop[1],2));
+		return value;
+	}
+	
+	public int node_to_node_cost(int[] start, int[] stop) {
+		int value = 1;
+		int[][] dirs = {{1, -1}, {-1, -1}, {-1, 1}, {1, 1}};
+		for(int[] dir : dirs) {
+			if(start[0]+dir[0]==stop[0] && start[1]+dir[1]==stop[1]) {
+				value = 1;
+				break;
+			}
+		}
+		return value;
+	}
+	
 	public ArrayList<int[]> neighbors(int[] node) {
 		ArrayList<int[]> result = new ArrayList<int[]>();
 		int[][] matrix = settings.getMaze().getMatrix();
@@ -229,7 +241,7 @@ public class A_star implements Algorithm {
 				}
 			}
 		} else {
-			int[][] dirs = {{0, 1},{0, -1} , {1, 0}, {-1, 0}};
+			int[][] dirs = {{0, 1},{1, 0} , {0, -1}, {-1, 0}};
 			for(int[] dir : dirs) {
 				int[] neighbor = {node[0] + dir[0], node[1] + dir[1]};
 				if(neighbor[0] >= 0 && neighbor[0] < settings.getMaze_x() && neighbor[1] >= 0 && neighbor[1] < settings.getMaze_y()) {
@@ -244,8 +256,7 @@ public class A_star implements Algorithm {
 	
 	@Override
 	public Boolean running() {
-		// TODO Auto-generated method stub
-		return null;
+		return running;
 	}
 
 	

@@ -168,7 +168,6 @@ public class Dijkstra implements Algorithm {
 
 	@Override
 	public Boolean solved() {
-		
 		return found;
 	}
 
