@@ -14,6 +14,12 @@ public class PathAlgorithm {
 			case "Depth-first search": 
 				a = new DFS(settings);
 				break;
+			case "A*":
+				a = new A_star(settings);
+				break;
+			case "DFS":
+				a = new DFS(settings);
+				break;
 			default:
 				a = new BFS(settings);
 				break;

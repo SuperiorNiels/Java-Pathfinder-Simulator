@@ -1,16 +1,20 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Dijkstra implements Algorithm {
-
+	
+	
 	private Settings settings;
-	private ArrayList<Node> unvisited;
 	private ArrayList<String> visited;
 	private int[][] distance;
-	private ArrayList<Node> prev;
+	private HashMap<String, int[]> prev;
 	private Boolean found = false;
+	private Boolean done = false;
 	private int iterations = 0;
-	Node current_node;
+	int[] current;
 	private Boolean running = true;
+	
+	private final int INF = 99999;
 	
 	public Dijkstra(Settings settings) {
 		this.settings = settings;
@@ -19,8 +23,8 @@ public class Dijkstra implements Algorithm {
 	@Override
 	public void initialize() {
 		iterations = 0;
-		unvisited = new ArrayList<Node>();
-		prev = new ArrayList<Node>();
+		current = new int[2];
+		prev = new HashMap<String, int[]>();
 		visited = new ArrayList<String>();
 		int[][] matrix = settings.getMaze().getMatrix();
 		int x = settings.getMaze_x();
@@ -30,14 +34,11 @@ public class Dijkstra implements Algorithm {
 			for(int j=0;j<y;j++) {
 				if(matrix[i][j]==2) {
 					int[] temp = {i, j};
-					unvisited.add(new Node(temp,null));
-					prev.add(new Node(temp,null));
+					prev.put(temp[0]+" "+temp[1],null);
 					distance[i][j] = 0; //starting point
 				}
 				else {
-					int[] temp = {i, j};
-					unvisited.add(new Node(temp,null));
-					distance[i][j] = 99999; //To represent infinity
+					distance[i][j] = INF; //To represent infinity
 				}
 			}
 		}		
@@ -51,23 +52,17 @@ public class Dijkstra implements Algorithm {
 		int[][] matrix = settings.getMaze().getMatrix();
 		ArrayList<String> path = new ArrayList<String>();
 		if(found) {
-			Node parent = null;
+			int[] parent = null;
 			for(int i=0;i<x;i++) {
 				for(int j=0;j<y;j++) {
 					if(matrix[i][j]==3) {
-						parent = prev.get(findPrevNode(i,j));
+						parent = prev.get(i+" "+j);
 					}
 				}
 			}
-			while(parent.getParent()!=null) {
-				int[] point = parent.getNode();
-				path.add(point[0]+" "+point[1]);
-				Node next = parent.getParent();
-				if(next!=null)
-					point = next.getNode();
-				else parent = null;
-				int index = findPrevNode(point[0],point[1]);
-				parent = prev.get(index);
+			while(parent!=null) {
+				path.add(parent[0]+" "+parent[1]);
+				parent = prev.get(parent[0]+" "+parent[1]);
 			}
 		}
 		
@@ -86,7 +81,6 @@ public class Dijkstra implements Algorithm {
 		}
 		
 		if(!found) {
-			int [] current = current_node.getNode();
 			solution[current[0]][current[1]] = 7;
 		}
 		
@@ -95,37 +89,36 @@ public class Dijkstra implements Algorithm {
 
 	@Override
 	public int[][] getSolution() {
+		
 		int x = settings.getMaze_x();
 		int y = settings.getMaze_y();
-		int p = 0;
+		int[][] solution = new int[x][y];
 		int[][] matrix = settings.getMaze().getMatrix();
-		while(!unvisited.isEmpty()) {
-			step();
-			System.out.println("test "+p);
-			p++;
-		}
-		Node parent = null;
 		ArrayList<String> path = new ArrayList<String>();
-		for(int i=0;i<x;i++) {
-			for(int j=0;j<y;j++) {
-				if(matrix[i][j]==3) {
-					parent = prev.get(findPrevNode(i,j));
-					System.out.println("test2");
+		double t0 = System.nanoTime();
+		while(!done) {
+			step();
+		}
+		running = false;
+		double t1 = System.nanoTime();
+		System.out.println(t1-t0);
+		t0 = System.nanoTime();
+		if(found) {
+			int[] parent = null;
+			for(int i=0;i<x;i++) {
+				for(int j=0;j<y;j++) {
+					if(matrix[i][j]==3) {
+						parent = prev.get(i+" "+j);
+					}
 				}
 			}
+			while(parent!=null) {
+				path.add(parent[0]+" "+parent[1]);
+				parent = prev.get(parent[0]+" "+parent[1]);
+			}
 		}
-		while(parent.getParent()!=null) {
-			int[] point = parent.getNode();
-			path.add(point[0]+" "+point[1]);
-			Node next = parent.getParent();
-			if(next!=null)
-				point = next.getNode();
-			else parent = null;
-			int index = findPrevNode(point[0],point[1]);
-			parent = prev.get(index);
-		}
-		
-		int[][] solution = new int[x][y];
+		t1 = System.nanoTime();
+		System.out.println(t1-t0);
 		for(int i=0;i<x;i++) {
 			for(int j=0;j<y;j++) {
 				String temp = i+" "+j;
@@ -138,38 +131,43 @@ public class Dijkstra implements Algorithm {
 				}
 			}
 		}
+		
+		if(!found) {
+			solution[current[0]][current[1]] = 7;
+		}
+		
 		return solution;
 	}
 
 	@Override
 	public void step() {
-		int[][] matrix = settings.getMaze().getMatrix();
-		int[] current = findShortest();
-		current_node = unvisited.get(findUnvisitedNode(current[0],current[1]));
-		unvisited.remove(findUnvisitedNode(current[0],current[1]));
-		visited.add(current[0]+" "+current[1]);
-		//System.out.println(current[0]+" "+current[1]);
-		if(matrix[current[0]][current[1]]==3) {
-			found = true;
-		} else {
+		if(!done){
+			int[][] matrix = settings.getMaze().getMatrix();
+			current = findShortest();
+			if(visited.contains(current[0]+" "+current[1])){
+				done = true;
+			}
+			visited.add(current[0]+" "+current[1]);
+			if(matrix[current[0]][current[1]]==3) {
+				found = true;
+				done = true;
+			}
 			ArrayList<int[]> n = neighbors(current);
 			for(int i=0;i<n.size();i++) {
 				int[] neighbor = n.get(i);
 				int alt = distance[current[0]][current[1]]+1;
 				if(alt < distance[neighbor[0]][neighbor[1]]) {
 					distance[neighbor[0]][neighbor[1]] = alt;
-					Node nextNode = new Node(neighbor,current_node);
-					prev.add(nextNode);
+					prev.put(neighbor[0]+" "+neighbor[1], current);
 				}
 			}
+			matrix = null;
+			iterations++;
 		}
-		matrix = null;
-		iterations++;
 	}
 
 	@Override
 	public Boolean solved() {
-		
 		return found;
 	}
 
@@ -186,11 +184,11 @@ public class Dijkstra implements Algorithm {
 	
 	public int[] findShortest() {
 		int [] shortest = new int[2];
-		int Svalue = 999999;
+		int Svalue = INF;
 		for(int i=0;i<distance.length;i++) {
-			for(int j=0;j<distance.length;j++) {
-				int k = findUnvisitedNode(i,j);
-				if(Svalue>distance[i][j] && k != -1) {
+			for(int j=0;j<distance[0].length;j++) {
+				int[] temp = {i, j};
+				if(Svalue>distance[i][j] && !visited.contains(temp[0]+" "+temp[1])) {
 					Svalue = distance[i][j];
 					shortest[0] = i;
 					shortest[1] = j;
@@ -198,30 +196,6 @@ public class Dijkstra implements Algorithm {
 			}
 		}
 		return shortest;
-	}
-	
-	public int findUnvisitedNode(int i, int j) {
-		int n = -1;
-		for(int k=0;k<unvisited.size();k++) {
-			int [] current = unvisited.get(k).getNode();
-			if(current[0]==i && current[1]==j) {
-				n = k;
-				break;
-			}
-		}
-		return n;
-	}
-	
-	public int findPrevNode(int i, int j) {
-		int n = -1;
-		for(int k=0;k<prev.size();k++) {
-			int [] current = prev.get(k).getNode();
-			if(current[0]==i && current[1]==j) {
-				n = k;
-				break;
-			}
-		}
-		return n;
 	}
 	
 	public ArrayList<int[]> neighbors(int[] node) {
