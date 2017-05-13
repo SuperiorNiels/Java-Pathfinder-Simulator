@@ -48,7 +48,7 @@ public class FileHandler {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
         	File selectedFile = fileChooser.getSelectedFile();
         	String name = selectedFile.getName();
-        	String[] register = {"txt",".png",".jpg",".jpeg",".html",".docx",".gif",".maze",".","/"};
+        	String[] register = {".txt",".png",".jpg",".jpeg",".html",".docx",".gif",".maze",".","/"};
            	name = name.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
            	name = removeExt(name, register);
         	name = name + ".maze";
@@ -222,6 +222,9 @@ public class FileHandler {
 			}
 			i--;
 		}
-		return name = name.substring(i+2, name.length());
+		try {
+			name = name.substring(i+2, name.length());
+		} catch(StringIndexOutOfBoundsException e) {}
+		return name;
 	}
 }
