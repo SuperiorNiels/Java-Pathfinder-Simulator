@@ -11,6 +11,12 @@ public class DFS implements Algorithm {
 	Node current;
 	private Settings settings;
 	
+	/**DFS
+	 * is the implementation of the depth first search algorithm. It has 3 main methods.
+	 * getNextStep, getSolution and step.
+	 * @param settings = the settings object from GUI
+	 * @author Dieter Balemans
+	 */
 	public DFS(Settings settings) {
 		this.settings = settings;
 	}
@@ -34,6 +40,12 @@ public class DFS implements Algorithm {
 		}
 		found = false;
 	}
+	
+	/**getNextStep
+	 * is a method that calculates the next step in the algorithm.
+	 * @return solution = a matrix with the results of the next step
+	 * @author Dieter Balemans
+	 */
 	@Override
 	public int[][] getNextStep() {
 		step();
@@ -73,6 +85,12 @@ public class DFS implements Algorithm {
 		return solution;
 	}
 	
+	/**getSolution
+	 * is a method that calculates all steps to the end of the algrithm. This means a path has been found,
+	 * or no path has been found but everything is searched.
+	 * @return solution = a matrix with the end result
+	 * @author Dieter Balemans
+	 */
 	@Override
 	public int[][] getSolution() {
 		while(!s.isEmpty()) {
@@ -118,6 +136,10 @@ public class DFS implements Algorithm {
 		return iterations;
 	}
 	
+	/**Step
+	 * calculates 1 iteration of the algorithm
+	 * @author Dieter Balemans
+	 */
 	@Override
 	public void step() {
 		int[][] matrix = settings.getMaze().getMatrix();

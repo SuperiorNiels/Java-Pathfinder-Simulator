@@ -1,12 +1,10 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class A_star implements Algorithm {
-	
+public class Greedy implements Algorithm {
 	private Settings settings;
 	private HashMap<String, int[]> open;
 	private HashMap<String, int[]> closed;
-	private int[][] gScore;
 	private double[][] fScore;
 	private HashMap<String, int[]> prev;
 	private Boolean found = false;
@@ -15,16 +13,17 @@ public class A_star implements Algorithm {
 	private Boolean running = true;
 	
 	private final int INF = 99999;
-	/**A_star
-	 * is the implementation of the A_star algorithm. It has 3 main methods.
+	
+	/**Greedy
+	 * is the implementation of the greedy best first search algorithm. It has 3 main methods.
 	 * getNextStep, getSolution and step.
 	 * @param settings = the settings object from GUI
 	 * @author Dieter Balemans
 	 */
-	public A_star(Settings settings) {
+	public Greedy(Settings settings) {
 		this.settings = settings;
 	}
-
+	
 	@Override
 	public void initialize() {
 		iterations = 0;
@@ -37,7 +36,6 @@ public class A_star implements Algorithm {
 		int[][] matrix = settings.getMaze().getMatrix();
 		int x = settings.getMaze_x();
 		int y = settings.getMaze_y();
-		gScore = new int[x][y];
 		fScore = new double[x][y];
 		for(int i=0;i<x;i++) {
 			for(int j=0;j<y;j++) {
@@ -45,17 +43,14 @@ public class A_star implements Algorithm {
 					start[0] = i;
 					start[1] = j;
 					prev.put(start[0]+" "+start[1],null);
-					gScore[i][j] = 0; //starting point
 					open.put(start[0]+" "+start[1],start);
 				}
 				else if(matrix[i][j]==3){
 					stop[0] = i;
 					stop[1] = j;
-					gScore[i][j] = INF;
 					fScore[i][j] = 0;
 				}
 				else {
-					gScore[i][j] = INF; //To represent infinity
 					fScore[i][j] = INF;
 				}
 			}
@@ -113,7 +108,7 @@ public class A_star implements Algorithm {
 		}
 		return solution;
 	}
-	
+
 	/**getSolution
 	 * is a method that calculates all steps to the end of the algrithm. This means a path has been found,
 	 * or no path has been found but everything is searched.
@@ -186,7 +181,6 @@ public class A_star implements Algorithm {
 		// TODO Auto-generated method stub
 		
 	}
-
 	/**Step
 	 * calculates 1 iteration of the algorithm
 	 * @author Dieter Balemans
@@ -205,14 +199,12 @@ public class A_star implements Algorithm {
 			int [] neighbor = n.get(i);
 			if(closed.containsKey(neighbor[0]+" "+neighbor[1]))
 				continue;
-			int tentative_gScore = gScore[current[0]][current[1]] + node_to_node_cost(current,neighbor);
 			if(!open.containsKey(neighbor[0]+" "+neighbor[1]))
 				open.put(neighbor[0]+" "+neighbor[1],neighbor);
-			else if(tentative_gScore>=gScore[current[0]][current[1]])
+			else if(fScore[neighbor[0]][neighbor[1]]>=fScore[current[0]][current[1]])
 				continue;
 			prev.put(neighbor[0]+" "+neighbor[1], current);
-			gScore[neighbor[0]][neighbor[1]] = tentative_gScore;
-			fScore[neighbor[0]][neighbor[1]] = gScore[neighbor[0]][neighbor[1]] + heuristic_cost_estimate(neighbor,stop);
+			fScore[neighbor[0]][neighbor[1]] = heuristic_cost_estimate(neighbor,stop);
 		}
 		iterations++;
 	}
