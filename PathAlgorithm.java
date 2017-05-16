@@ -1,4 +1,3 @@
-
 public class PathAlgorithm {
 	Settings settings;
 	Algorithm a;

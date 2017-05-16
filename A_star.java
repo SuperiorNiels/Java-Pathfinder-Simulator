@@ -19,7 +19,6 @@ public class A_star implements Algorithm {
 	 * is the implementation of the A_star algorithm. It has 3 main methods.
 	 * getNextStep, getSolution and step.
 	 * @param settings = the settings object from GUI
-	 * @author Dieter Balemans
 	 */
 	public A_star(Settings settings) {
 		this.settings = settings;
@@ -66,7 +65,6 @@ public class A_star implements Algorithm {
 	/**getNextStep
 	 * is a method that calculates the next step in the algorithm.
 	 * @return solution = a matrix with the results of the next step
-	 * @author Dieter Balemans
 	 */
 	@Override
 	public int[][] getNextStep() {
@@ -118,7 +116,6 @@ public class A_star implements Algorithm {
 	 * is a method that calculates all steps to the end of the algrithm. This means a path has been found,
 	 * or no path has been found but everything is searched.
 	 * @return solution = a matrix with the end result
-	 * @author Dieter Balemans
 	 */
 	@Override
 	public int[][] getSolution() {
@@ -189,7 +186,6 @@ public class A_star implements Algorithm {
 
 	/**Step
 	 * calculates 1 iteration of the algorithm
-	 * @author Dieter Balemans
 	 */
 	@Override
 	public void step() {
