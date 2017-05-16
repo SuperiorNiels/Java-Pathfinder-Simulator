@@ -166,6 +166,7 @@ public class Dijkstra implements Algorithm {
 			current = findShortest();
 			if(visited.contains(current[0]+" "+current[1])){
 				done = true;
+				running = false;
 			}
 			visited.add(current[0]+" "+current[1]);
 			if(matrix[current[0]][current[1]]==3) {
