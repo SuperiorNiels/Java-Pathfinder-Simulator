@@ -181,7 +181,9 @@ public class BFS implements Algorithm {
 				int[] neighbor = {node[0] + dir[0], node[1] + dir[1]};
 				if(neighbor[0] >= 0 && neighbor[0] < settings.getMaze_x() && neighbor[1] >= 0 && neighbor[1] < settings.getMaze_y()) {
 					if(matrix[neighbor[0]][neighbor[1]]==0 || matrix[neighbor[0]][neighbor[1]]==3) {
-						result.add(neighbor);
+						if(!visited.contains(neighbor[0]+" "+neighbor[1])) {
+							result.add(neighbor);
+						}
 					}
 				}
 			}
@@ -191,7 +193,9 @@ public class BFS implements Algorithm {
 				int[] neighbor = {node[0] + dir[0], node[1] + dir[1]};
 				if(neighbor[0] >= 0 && neighbor[0] < settings.getMaze_x() && neighbor[1] >= 0 && neighbor[1] < settings.getMaze_y()) {
 					if(matrix[neighbor[0]][neighbor[1]]==0 || matrix[neighbor[0]][neighbor[1]]==3) {
-						result.add(neighbor);
+						if(!visited.contains(neighbor[0]+" "+neighbor[1])) {
+							result.add(neighbor);
+						}
 					}
 				}
 			}
