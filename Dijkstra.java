@@ -15,7 +15,12 @@ public class Dijkstra implements Algorithm {
 	private Boolean running = true;
 	
 	private final int INF = 99999;
-	
+
+	/**Dijkstra
+	 * is the implementation of the Dijkstra algorithm. It has 3 main methods.
+	 * getNextStep, getSolution and step.
+	 * @param settings = the settings object from GUI
+	 */
 	public Dijkstra(Settings settings) {
 		this.settings = settings;
 	}
@@ -44,6 +49,11 @@ public class Dijkstra implements Algorithm {
 		}		
 	}
 
+
+	/**getNextStep
+	 * is a method that calculates the next step in the algorithm.
+	 * @return solution = a matrix with the results of the next step
+	 */
 	@Override
 	public int[][] getNextStep() {
 		step();
@@ -87,6 +97,12 @@ public class Dijkstra implements Algorithm {
 		return solution;
 	}
 
+	
+	/**getSolution
+	 * is a method that calculates all steps to the end of the algrithm. This means a path has been found,
+	 * or no path has been found but everything is searched.
+	 * @return solution = a matrix with the end result
+	 */
 	@Override
 	public int[][] getSolution() {
 		
@@ -139,6 +155,10 @@ public class Dijkstra implements Algorithm {
 		return solution;
 	}
 
+
+	/**Step
+	 * calculates 1 iteration of the algorithm
+	 */
 	@Override
 	public void step() {
 		if(!done){

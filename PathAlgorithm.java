@@ -1,7 +1,11 @@
-
 public class PathAlgorithm {
 	Settings settings;
 	Algorithm a;
+	/**PathAlgoritm
+	 * is the class that selects the algorithm. It connects the GUI with the algorithm interface.
+	 * @param settings
+	 */
+	
 	public PathAlgorithm(Settings settings) {
 		this.settings = settings;
 		switch(settings.getAlgorithm()){
@@ -19,6 +23,9 @@ public class PathAlgorithm {
 				break;
 			case "DFS":
 				a = new DFS(settings);
+				break;
+			case "Greedy Best-first search":
+				a = new Greedy(settings);
 				break;
 			default:
 				a = new BFS(settings);

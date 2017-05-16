@@ -416,8 +416,8 @@ public class GUI extends JFrame {
 		algorithm.add(dfs);
 		dfs.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(dfs);
-		JRadioButton Bfs = new JRadioButton("Best-first search");
-		if(settings.getAlgorithm().equals("Best-first search")) {Bfs.setSelected(true);}
+		JRadioButton Bfs = new JRadioButton("Greedy Best-first search");
+		if(settings.getAlgorithm().equals("Greedy Best-first search")) {Bfs.setSelected(true);}
 		algorithm.add(Bfs);
 		Bfs.addActionListener(changeAlgorithm);
 		algorithm_buttons.add(Bfs);
